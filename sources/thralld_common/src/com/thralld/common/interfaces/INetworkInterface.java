@@ -3,6 +3,7 @@
  */
 package com.thralld.common.interfaces;
 
+import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.ConnectionSpecification;
 import com.thralld.common.aobjects.NetworkConnection;
 
@@ -40,6 +41,7 @@ public interface INetworkInterface {
 	 * 		or 
 	 * 		null if unsuccessful
 	 */
+	@CanReturnNull
 	public abstract NetworkConnection listen(ConnectionSpecification targetConnSpec);
 	
 	
@@ -60,6 +62,7 @@ public interface INetworkInterface {
 	 * @param targetDataSize The size of data that is being expected to receive.
 	 * @return Data that is being received.
 	 */
+	@CanReturnNull
 	public abstract byte[] receiveData(NetworkConnection targetConn, int targetDataSize);
 
 }
