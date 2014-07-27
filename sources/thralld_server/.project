@@ -3,6 +3,7 @@
 	<name>thralld_server</name>
 	<comment></comment>
 	<projects>
+		<project>thralld_common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
