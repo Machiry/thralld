@@ -8,6 +8,7 @@ package com.thralld.common.annotations;
  * @author m4kh1ry
  *
  */
-public @interface CanReturnNull {
+public @interface CanReturnNull 
+{
 
 }
