@@ -10,7 +10,8 @@ import java.util.logging.Level;
  * @author m4kh1ry
  *
  */
-public class Logger {
+public class Logger 
+{
 
 	private static final String exceptionPrefix = "EXCEPTION:";
 	private static java.util.logging.Logger targetLogger  = java.util.logging.Logger.getLogger("DefaultLogger");
@@ -36,5 +37,14 @@ public class Logger {
 	public static void logException(String msg,Exception e)
 	{
 		targetLogger.log(Level.SEVERE, exceptionPrefix + msg, e);
+	}
+	
+	/***
+	 * Log provided error message.
+	 * @param msg Error message that needs to be displayed.
+	 */
+	public static void logError(String msg)
+	{
+		targetLogger.log(Level.WARNING, msg);
 	}
 }

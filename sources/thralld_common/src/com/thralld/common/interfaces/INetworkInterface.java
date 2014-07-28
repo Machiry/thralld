@@ -21,28 +21,29 @@ public interface INetworkInterface {
 	 * This method opens the connection specified by the argument.
 	 * 
 	 * @param targetConnSpec The connection specification of the target connection.
-	 * @return true/false depending on whether the opening is successful or not
+	 * @return target network connection object specifying connection instance.
 	 */
-	public abstract boolean openConnection(ConnectionSpecification targetConnSpec);
+	@CanReturnNull
+	public abstract NetworkConnection openConnection(ConnectionSpecification targetConnSpec);
 	
 	/***
 	 * This method closes the connection specified by the argument.
 	 * 
-	 * @param targetConnSpec The connection specification which needs to be closed.
+	 * @param targetConn The connection that needs to be closed.
 	 * @return true/false depending on whether the closing is successful or nor
 	 */
-	public abstract boolean closeConnection(ConnectionSpecification targetConnSpec);
+	public abstract boolean closeConnection(NetworkConnection targetConn);
 	
 	/***
-	 * This method listens for an incoming connection request on the specified connection spec.
+	 * This method listens for an incoming connection request on the specified connection.
 	 * 
-	 * @param targetConnSpec
+	 * @param targetConn the connection ti listen on.
 	 * @return NetworkConnection object representing the connection 
 	 * 		or 
 	 * 		null if unsuccessful
 	 */
 	@CanReturnNull
-	public abstract NetworkConnection listen(ConnectionSpecification targetConnSpec);
+	public abstract NetworkConnection listen(NetworkConnection targetConnS);
 	
 	
 	/***

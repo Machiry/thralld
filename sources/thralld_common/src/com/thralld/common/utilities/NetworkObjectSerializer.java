@@ -16,7 +16,8 @@ import com.thralld.common.logging.Logger;
  * @author m4kh1ry
  *
  */
-public class NetworkObjectSerializer {
+public class NetworkObjectSerializer 
+{
 	
 	
 	/***

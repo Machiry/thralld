@@ -19,9 +19,8 @@ import java.util.HashMap;
  * @author m4kh1ry
  *
  */
-public abstract class ConnectionSpecification {
-	
-	public abstract ConnectionSpecification getConnectionSpecification(String[] args);
+public abstract class ConnectionSpecification 
+{
 	public abstract HashMap<String,Object> getPropertiesMap();
 	
 }

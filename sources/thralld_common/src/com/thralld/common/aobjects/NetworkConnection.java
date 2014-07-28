@@ -14,7 +14,8 @@ import com.thralld.common.annotations.CanReturnNull;
  * @author m4kh1ry
  *
  */
-public abstract class NetworkConnection {
+public abstract class NetworkConnection 
+{
 	
 	/***
 	 * This method returns input stream of the connection
