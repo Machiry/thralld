@@ -15,7 +15,8 @@ import com.thralld.common.aobjects.NetworkConnection;
  * @author m4kh1ry
  *
  */
-public interface INetworkInterface {
+public interface INetworkInterface 
+{
 	
 	/***
 	 * This method opens the connection specified by the argument.
