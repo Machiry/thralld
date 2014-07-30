@@ -19,6 +19,7 @@ public abstract class CommandScheduleInfo implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 10588553931099462L;
+	public String transactionID = null;
 
 	//We should have copy constructor for this class as this is serializable
 	public CommandScheduleInfo()

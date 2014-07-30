@@ -19,6 +19,7 @@ public abstract class CommandRequestInfo implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 2100453935055536579L;
+	public String transactionID = null;
 
 	//We should have copy constructor for this class as this is serializable
 	public CommandRequestInfo()
