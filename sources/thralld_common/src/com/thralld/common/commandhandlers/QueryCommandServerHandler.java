@@ -18,7 +18,7 @@ import com.thralld.common.utilities.NetworkObjectSerializer;
  * @author m4kh1ry
  *
  */
-public class QueryCommandHandler extends ServerCommandHandler 
+public class QueryCommandServerHandler extends ServerCommandHandler 
 {
 
 	@Override
