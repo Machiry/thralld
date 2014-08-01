@@ -19,11 +19,27 @@ public abstract class CommandRequestInfo implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 2100453935055536579L;
-	public String transactionID = null;
+	public String transactionID = "";
 
 	//We should have copy constructor for this class as this is serializable
 	public CommandRequestInfo()
 	{
 		
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.transactionID.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o != null && (o instanceof CommandRequestInfo))
+		{
+			return this.transactionID.equals(((CommandRequestInfo)o).transactionID);
+		}
+		return false;
 	}
 }

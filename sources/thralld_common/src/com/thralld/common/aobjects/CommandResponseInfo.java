@@ -26,5 +26,21 @@ public abstract class CommandResponseInfo implements Serializable
 	{
 			
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.transactionID.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o != null && (o instanceof CommandRequestInfo))
+		{
+			return this.transactionID.equals(((CommandRequestInfo)o).transactionID);
+		}
+		return false;
+	}
 
 }
