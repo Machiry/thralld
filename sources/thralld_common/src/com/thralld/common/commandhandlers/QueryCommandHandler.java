@@ -4,7 +4,7 @@
 package com.thralld.common.commandhandlers;
 
 import com.thralld.common.annotations.CanReturnNull;
-import com.thralld.common.aobjects.CommandHandler;
+import com.thralld.common.aobjects.ServerCommandHandler;
 import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.aobjects.NetworkConnection;
 import com.thralld.common.commands.QueryCommandRequestInfo;
@@ -14,11 +14,11 @@ import com.thralld.common.logging.Logger;
 import com.thralld.common.utilities.NetworkObjectSerializer;
 
 /**
- * This class implements the command handler for QueryCommand
+ * This class implements server side command handler for QueryCommand
  * @author m4kh1ry
  *
  */
-public class QueryCommandHandler extends CommandHandler 
+public class QueryCommandHandler extends ServerCommandHandler 
 {
 
 	@Override

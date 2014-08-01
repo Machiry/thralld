@@ -5,14 +5,14 @@ package com.thralld.common.aobjects;
 
 
 /**
- * This class represents the general structure of a command handler.
+ * This class represents the general structure of  server side command handler.
  * @author m4kh1ry
  *
  */
-public abstract class CommandHandler 
+public abstract class ServerCommandHandler 
 {
 	/***
-	 * This method handles the underlying command.
+	 * This method handles the underlying command on server side
 	 * It receives  a requestinfo and returns responseinfo.
 	 * 
 	 * @param targetNetworkConnection Network connection which needs to be used for communication.
