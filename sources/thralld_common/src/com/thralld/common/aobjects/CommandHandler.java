@@ -3,42 +3,22 @@
  */
 package com.thralld.common.aobjects;
 
-import com.thralld.common.utilities.NetworkObjectSerializer;
 
 /**
+ * This class represents the general structure of a command handler.
  * @author m4kh1ry
  *
  */
 public abstract class CommandHandler 
 {
-	public boolean sendRequestInfo(CommandRequestInfo toSend,NetworkConnection targetNetworkConnection)
-	{
-		return NetworkObjectSerializer.sendObject(targetNetworkConnection, toSend);
-	}
-	
-	public CommandRequestInfo receiveRequestInfo(NetworkConnection targetNetworkConnection)
-	{
-		return NetworkObjectSerializer.receiveObject(targetNetworkConnection, CommandRequestInfo.class);
-	}
-	
-	public boolean sendScheduleInfo(CommandScheduleInfo toSend,NetworkConnection targetNetworkConnection)
-	{
-		return NetworkObjectSerializer.sendObject(targetNetworkConnection, toSend);
-	}
-	
-	public CommandScheduleInfo receiveScheduleInfo(NetworkConnection targetNetworkConnection)
-	{
-		return NetworkObjectSerializer.receiveObject(targetNetworkConnection, CommandScheduleInfo.class);
-	}
-	
-	public boolean sendResponseInfo(CommandResponseInfo toSend,NetworkConnection targetNetworkConnection)
-	{
-		return NetworkObjectSerializer.sendObject(targetNetworkConnection, toSend);
-	}
-	
-	public CommandResponseInfo receiveResponseInfo(NetworkConnection targetNetworkConnection) throws Exception
-	{
-		return NetworkObjectSerializer.receiveObject(targetNetworkConnection, CommandResponseInfo.class);
-	}
+	/***
+	 * This method handles the underlying command.
+	 * It receives  a requestinfo and returns responseinfo.
+	 * 
+	 * @param targetNetworkConnection Network connection which needs to be used for communication.
+	 * @param toProcess Request info for the command
+	 * @return Received response info object or null (if an error occurs)
+	 */
+	public abstract CommandResponseInfo processCommand(NetworkConnection targetNetworkConnection,CommandRequestInfo toProcess);
 
 }

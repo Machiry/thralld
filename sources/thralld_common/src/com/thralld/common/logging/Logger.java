@@ -47,4 +47,13 @@ public class Logger
 	{
 		targetLogger.log(Level.WARNING, msg);
 	}
+	
+	/***
+	 * Log provided information.
+	 * @param msg info message that needs to be displayed.
+	 */
+	public static void logInfo(String msg)
+	{
+		targetLogger.log(Level.INFO, msg);
+	}
 }
