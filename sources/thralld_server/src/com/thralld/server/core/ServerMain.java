@@ -2,23 +2,30 @@
  * 
  */
 package com.thralld.server.core;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.thralld.common.annotations.ThralldCommandVersion;
+import com.thralld.common.aobjects.Command;
+import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.interfaces.IServerStatusInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
+import com.thralld.common.utilities.ReflectionHelper;
 
 /**
  * @author m4kh1ry
  *
  */
-public class ServerMain 
+public class ServerMain implements IServerStatusInterface
 {
 	public HashMap<ClientInfo,ServerThread> currentProcessingThreads = new HashMap<ClientInfo, ServerThread>();
 	private ServerMainThread currentServerMain = null;
 	
-	private List<ClientInfo> getClientInfoByName(String clientName)
+	@Override
+	public List<ClientInfo> getClientInfoByName(String clientName)
 	{
 		ArrayList<ClientInfo> toRet = new ArrayList<ClientInfo>();
 		for(ClientInfo cli:currentProcessingThreads.keySet())
@@ -39,12 +46,14 @@ public class ServerMain
 		}
 	}
 	
+	@Override
 	public ArrayList<ClientInfo> getConnectedClients()
 	{
 		ArrayList<ClientInfo> toRet = new ArrayList<ClientInfo>(currentProcessingThreads.keySet());
 		return toRet;
 	}
 	
+	@Override
 	public boolean startServer(int portNumber)
 	{
 		boolean retVal = false;
@@ -65,6 +74,7 @@ public class ServerMain
 		return retVal;
 	}
 	
+	@Override
 	public boolean stopServer()
 	{
 		if(this.currentServerMain != null && !this.currentServerMain.isStopped)
@@ -72,6 +82,58 @@ public class ServerMain
 			return this.currentServerMain.stopMainThread();
 		}
 		return false;
+	}
+	
+	
+	private String getCommandVersion(Object comm)
+	{
+		Annotation[] availableAnno = comm.getClass().getAnnotations();
+		for(Annotation annon:availableAnno)
+		{
+			if(annon instanceof ThralldCommandVersion)
+			{
+				return ((ThralldCommandVersion)annon).value();
+			}
+		}
+		return "N/A";
+	}
+	
+	@Override
+	public HashMap<String,String> getAvailableCommands()
+	{
+		HashMap<String,String> toRet = new HashMap<String,String>();
+		ArrayList<Class<?>> availableCommands = (ArrayList<Class<?>>) ReflectionHelper.getCommandClasses();
+		for(Class<?> comm:availableCommands)
+		{
+			try
+			{
+				Command currComm = (Command)comm.newInstance();
+				toRet.put(currComm.getCommandName(), getCommandVersion(currComm));
+			}
+			catch(Exception e)
+			{
+				Logger.logException("Problem occured while trying to get command information", e);
+			}
+			
+		}
+		return toRet;
+	}
+	
+	@Override
+	public List<String> getCommandParameters(String commandName)
+	{
+		Command targetCommand = ReflectionHelper.getCommandByName(commandName);
+		CommandRequestInfo reqInfo;
+		List<String> toRet = null;
+		try 
+		{
+			reqInfo = (CommandRequestInfo)targetCommand.getCommandRequestInfoType().newInstance();
+			toRet = reqInfo.getRequiredParameters();
+		} catch (Exception e) 
+		{
+			Logger.logException("Problem occured while trying to get command parameters", e);
+		}
+		return toRet;
 	}
 
 }

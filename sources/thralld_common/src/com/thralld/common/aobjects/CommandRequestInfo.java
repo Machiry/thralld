@@ -4,6 +4,8 @@
 package com.thralld.common.aobjects;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Every Command ReqeustInfo should inherit this class.
@@ -27,6 +29,20 @@ public abstract class CommandRequestInfo implements Serializable
 		
 	}
 	
+	/***
+	 * This method returns names of required parameters by this command
+	 * 
+	 * @return Returns list of parameter names required by the command
+	 */
+	public abstract List<String> getRequiredParameters();
+	
+	/***
+	 * This method sets the parameters for the command.
+	 * 
+	 * @param toSetParam Map containing values of all the required parameters.
+	 * @return true if all the required parameters are set else false
+	 */
+	public abstract boolean setParameters(Map<String,Object> toSetParam);
 	
 	@Override
 	public int hashCode()
