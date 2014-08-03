@@ -116,6 +116,8 @@ public class ServerThread extends Thread
 			//3. If you have a command, process it.
 			if(toProcess != null)
 			{
+				//TODO: add the initial handshake
+				
 				ServerCommandHandler commandHandler = CommandHandlerFactory.getServerCommandHandler(toProcess);
 				CommandResponseInfo resultInfo = commandHandler.processCommand(targetNetworkConnecion, toProcess);
 				if(resultInfo == null)

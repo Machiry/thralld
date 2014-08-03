@@ -4,7 +4,9 @@
 package com.thralld.common.utilities;
 
 import com.thralld.common.annotations.CanReturnNull;
+import com.thralld.common.aobjects.ClientCommandHandler;
 import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.commandhandlers.QueryCommandClientHandler;
 import com.thralld.common.commandhandlers.QueryCommandServerHandler;
 import com.thralld.common.commands.QueryCommandRequestInfo;
 import com.thralld.common.aobjects.ServerCommandHandler;
@@ -31,6 +33,25 @@ public class CommandHandlerFactory
 			if(toProcessRequest instanceof QueryCommandRequestInfo)
 			{
 				toRet = new QueryCommandServerHandler();
+			}
+		}
+		return toRet;
+	}
+	
+	/***
+	 * This method returns client side command handler for provided RequestInfo
+	 * @param toProcessRequest The target requestInfo to process
+	 * @return ClientCommandHandler capable of handling the command or null if no handler exists.
+	 */
+	@CanReturnNull
+	public static ClientCommandHandler getClientCommandHandler(CommandRequestInfo toProcessRequest)
+	{
+		QueryCommandClientHandler toRet = null;
+		if(toProcessRequest != null)
+		{
+			if(toProcessRequest instanceof QueryCommandRequestInfo)
+			{
+				toRet = new QueryCommandClientHandler();
 			}
 		}
 		return toRet;

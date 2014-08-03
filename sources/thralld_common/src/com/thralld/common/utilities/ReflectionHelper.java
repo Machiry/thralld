@@ -32,7 +32,7 @@ public class ReflectionHelper
 	}
 	
 	/***
-	 * This method return Command object for a given command.
+	 * This method return Command object for a given command name.
 	 * @param commandName target command name
 	 * @return Command object of the target Command or null  if command is not found.
 	 */
@@ -60,6 +60,41 @@ public class ReflectionHelper
 		return toRet;
 	}
 	
+	/***
+	 * This method return Command object for a given command id.
+	 * @param commandId target command name
+	 * @return Command object of the target Command or null  if command is not found.
+	 */
+	@CanReturnNull
+	public static Command getCommandByID(int commandId)
+	{
+		Command toRet = null;
+		ArrayList<Class<?>> availableCommands = (ArrayList<Class<?>>) ReflectionHelper.getCommandClasses();
+		for(Class<?> comm:availableCommands)
+		{
+			try
+			{
+				Command currComm = (Command)comm.newInstance();
+				if(currComm.getCommandID() == commandId)
+				{
+					toRet = currComm;
+					break;
+				}
+			}
+			catch(Exception e)
+			{
+				Logger.logException("Problem occured while trying to get command by name", e);
+			}
+		}
+		return toRet;
+	}
+	
+	/***
+	 * This method return version of the provided command object.
+	 * 
+	 * @param comm target command.
+	 * @return Version string of the command
+	 */
 	public static String getCommandVersion(Object comm)
 	{
 		Annotation[] availableAnno = comm.getClass().getAnnotations();
