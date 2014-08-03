@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.thralld.common.interfaces;
+package com.thralld.server.interfaces;
 
 import java.util.ArrayList;
 import java.util.HashMap;

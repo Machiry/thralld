@@ -27,6 +27,16 @@ public abstract class CommandScheduleInfo implements Serializable
 		
 	}
 	
+	/***
+	 * This method verifies whether the schedule info is valid or not
+	 * 
+	 * @return true/false depending on the whether schedule info is valid or nor
+	 */
+	public boolean isValid()
+	{
+		return true;
+	}
+	
 	@Override
 	public int hashCode()
 	{
@@ -41,5 +51,11 @@ public abstract class CommandScheduleInfo implements Serializable
 			return this.transactionID.equals(((CommandRequestInfo)o).transactionID);
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "ScheduleInfo:" + this.transactionID;
 	}
 }

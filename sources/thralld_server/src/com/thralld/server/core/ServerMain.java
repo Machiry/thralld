@@ -10,10 +10,10 @@ import java.util.List;
 import com.thralld.common.annotations.ThralldCommandVersion;
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
-import com.thralld.common.interfaces.IServerStatusInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
 import com.thralld.common.utilities.ReflectionHelper;
+import com.thralld.server.interfaces.IServerStatusInterface;
 
 /**
  * @author m4kh1ry
@@ -84,20 +84,6 @@ public class ServerMain implements IServerStatusInterface
 		return false;
 	}
 	
-	
-	private String getCommandVersion(Object comm)
-	{
-		Annotation[] availableAnno = comm.getClass().getAnnotations();
-		for(Annotation annon:availableAnno)
-		{
-			if(annon instanceof ThralldCommandVersion)
-			{
-				return ((ThralldCommandVersion)annon).value();
-			}
-		}
-		return "N/A";
-	}
-	
 	@Override
 	public HashMap<String,String> getAvailableCommands()
 	{
@@ -108,7 +94,7 @@ public class ServerMain implements IServerStatusInterface
 			try
 			{
 				Command currComm = (Command)comm.newInstance();
-				toRet.put(currComm.getCommandName(), getCommandVersion(currComm));
+				toRet.put(currComm.getCommandName(), ReflectionHelper.getCommandVersion(currComm));
 			}
 			catch(Exception e)
 			{

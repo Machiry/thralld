@@ -26,4 +26,14 @@ public class QueryCommandResponseInfo extends CommandResponseInfo
 	public List<Integer> commandIds = new ArrayList<Integer>();
 	public List<String> commandVersions = new ArrayList<String>();
 	public List<String> commandNames = new ArrayList<String>();
+	
+	@Override
+	public boolean isValid()
+	{
+		boolean retVal = true;
+		retVal = retVal && (this.commandIds.size() == this.noOfAvailableCommands);
+		retVal = retVal && (this.commandNames.size() == this.noOfAvailableCommands);
+		retVal = retVal && (this.commandVersions.size() == this.noOfAvailableCommands);
+		return retVal;
+	}
 }

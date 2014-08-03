@@ -30,6 +30,16 @@ public abstract class CommandRequestInfo implements Serializable
 	}
 	
 	/***
+	 * This method verifies whether the request info is valid or not
+	 * 
+	 * @return true/false depending on the whether request info is valid or nor
+	 */
+	public boolean isValid()
+	{
+		return true;
+	}
+	
+	/***
 	 * This method returns names of required parameters by this command
 	 * 
 	 * @return Returns list of parameter names required by the command
@@ -58,5 +68,11 @@ public abstract class CommandRequestInfo implements Serializable
 			return this.transactionID.equals(((CommandRequestInfo)o).transactionID);
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "RequestInfo:" + this.transactionID;
 	}
 }

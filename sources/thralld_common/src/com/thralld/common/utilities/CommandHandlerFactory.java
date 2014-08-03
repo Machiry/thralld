@@ -5,9 +5,9 @@ package com.thralld.common.utilities;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.CommandRequestInfo;
-import com.thralld.common.aobjects.ServerCommandHandler;
 import com.thralld.common.commandhandlers.QueryCommandServerHandler;
 import com.thralld.common.commands.QueryCommandRequestInfo;
+import com.thralld.common.aobjects.ServerCommandHandler;
 
 /**
  * This class returns command handlers for all the supported commands
@@ -25,7 +25,7 @@ public class CommandHandlerFactory
 	@CanReturnNull
 	public static ServerCommandHandler getServerCommandHandler(CommandRequestInfo toProcessRequest)
 	{
-		ServerCommandHandler toRet = null;
+		QueryCommandServerHandler toRet = null;
 		if(toProcessRequest != null)
 		{
 			if(toProcessRequest instanceof QueryCommandRequestInfo)

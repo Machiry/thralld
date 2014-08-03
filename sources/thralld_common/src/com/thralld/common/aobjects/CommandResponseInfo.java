@@ -27,6 +27,16 @@ public abstract class CommandResponseInfo implements Serializable
 			
 	}
 	
+	/***
+	 * This method verifies whether the response info is valid or not
+	 * 
+	 * @return true/false depending on the whether response info is valid or nor
+	 */
+	public boolean isValid()
+	{
+		return true;
+	}
+	
 	@Override
 	public int hashCode()
 	{
@@ -41,6 +51,12 @@ public abstract class CommandResponseInfo implements Serializable
 			return this.transactionID.equals(((CommandRequestInfo)o).transactionID);
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "ResponseInfo:" + this.transactionID;
 	}
 
 }

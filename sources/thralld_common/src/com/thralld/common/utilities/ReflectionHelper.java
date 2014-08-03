@@ -3,10 +3,12 @@
  */
 package com.thralld.common.utilities;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.thralld.common.annotations.CanReturnNull;
+import com.thralld.common.annotations.ThralldCommandVersion;
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.commands.QueryCommand;
 import com.thralld.common.logging.Logger;
@@ -56,5 +58,18 @@ public class ReflectionHelper
 			}
 		}
 		return toRet;
+	}
+	
+	public static String getCommandVersion(Object comm)
+	{
+		Annotation[] availableAnno = comm.getClass().getAnnotations();
+		for(Annotation annon:availableAnno)
+		{
+			if(annon instanceof ThralldCommandVersion)
+			{
+				return ((ThralldCommandVersion)annon).value();
+			}
+		}
+		return "N/A";
 	}
 }
