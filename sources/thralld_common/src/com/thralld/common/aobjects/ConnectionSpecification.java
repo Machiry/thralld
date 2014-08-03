@@ -4,6 +4,7 @@
 package com.thralld.common.aobjects;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Object that contains the specification of a connection.
@@ -22,5 +23,17 @@ import java.util.HashMap;
 public abstract class ConnectionSpecification 
 {
 	public abstract HashMap<String,Object> getPropertiesMap();
+	
+	@Override
+	public String toString()
+	{
+		String toRet = null;
+		toRet = "ConnectionSpecification:";
+		for(Map.Entry<String,Object> e:getPropertiesMap().entrySet())
+		{
+			toRet += e.getKey() + "=" + (e.getValue()== null? e.getValue().toString():"N/A") + ",";
+		}
+		return toRet;
+	}
 	
 }

@@ -11,6 +11,8 @@ import java.net.Socket;
 
 import com.thralld.common.aobjects.NetworkConnection;
 import com.thralld.common.logging.Logger;
+import com.thralld.common.objects.ClientInfo;
+import com.thralld.common.objects.ServerInfo;
 
 /**
  * @author m4kh1ry
@@ -67,6 +69,50 @@ public class TCPNetworkConnection extends NetworkConnection
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ClientInfo getClientInfo() 
+	{
+		ClientInfo toRet = null;
+		if(this.currrentConnSocket != null)
+		{
+			toRet = new ClientInfo();
+			toRet.setClientName(this.currrentConnSocket.getInetAddress().toString());
+			toRet.setLocalEndPoint(this.currrentConnSocket.getLocalSocketAddress().toString());
+			toRet.setRemoteEndPoint(this.currrentConnSocket.getRemoteSocketAddress().toString());
+		}
+		return toRet;
+	}
+
+	@Override
+	public ServerInfo getServerInfo() 
+	{
+		ServerInfo toRet = null;
+		if(this.currrentConnSocket != null)
+		{
+			toRet = new ServerInfo();
+			toRet.setServerName(this.currrentConnSocket.getInetAddress().toString());
+			toRet.setLocalEndPoint(this.currrentConnSocket.getLocalSocketAddress().toString());
+			toRet.setRemoteEndPoint(this.currrentConnSocket.getRemoteSocketAddress().toString());
+		}
+		return toRet;
+	}
+	
+	@Override
+	public String toString()
+	{
+		String toRet = null;
+		if(this.currrentConnSocket != null)
+		{
+			toRet = "Client Connection, Local Endpoint:" + this.currrentConnSocket.getLocalSocketAddress().toString();
+			toRet += " Remote Endpoint:" + this.currrentConnSocket.getRemoteSocketAddress().toString();
+		}
+		if(this.currentServSocket != null)
+		{
+			toRet = "Server Connection, Local Endpoint:" + this.currentServSocket.getLocalSocketAddress().toString();
+		}
+		return toRet;
 	}
 
 }

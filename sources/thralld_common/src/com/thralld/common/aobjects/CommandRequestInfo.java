@@ -27,6 +27,7 @@ public abstract class CommandRequestInfo implements Serializable
 		
 	}
 	
+	
 	@Override
 	public int hashCode()
 	{

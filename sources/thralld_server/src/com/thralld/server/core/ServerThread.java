@@ -87,6 +87,7 @@ public class ServerThread extends Thread
 	/***
 	 *The main message request processing method.
 	 */
+	@Override
 	public void run()
 	{
 		while(true)

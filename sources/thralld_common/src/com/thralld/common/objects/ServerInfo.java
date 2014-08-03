@@ -3,43 +3,31 @@
  */
 package com.thralld.common.objects;
 
-import java.util.HashMap;
+import com.thralld.common.aobjects.ConnectedEntityInfo;
 
 /**
  * This object contains all the information regarding a server
  * @author m4kh1ry
  *
  */
-public class ServerInfo 
+public class ServerInfo extends ConnectedEntityInfo
 {
-	public String serverName = "";
-	public HashMap<String,String> propertiesMap = new HashMap<String, String>();
-	
-	@Override
-	public String toString()
+	/***
+	 * This method sets the name of the server info object.
+	 * @param serverName new name for server 
+	 */
+	public void setServerName(String serverName)
 	{
-		String toRet = null;
-		return toRet;
+		this.entityName = serverName;
 	}
 	
-	@Override
-	public int hashCode()
+	/***
+	 * This method gets the name of the server
+	 * @return Server name of this ServerInfo object.
+	 */
+	public String getServerName()
 	{
-		int retVal = 0;
-		retVal = this.serverName.hashCode() ^ this.propertiesMap.hashCode();
-		return retVal;
-	}
-	
-	@Override
-	public boolean equals(Object o)
-	{
-		boolean retVal = false;
-		if(o != null)
-		{
-			ServerInfo toCompare = (ServerInfo)o;
-			retVal = this.serverName.equals(toCompare.serverName) && this.propertiesMap.equals(toCompare.propertiesMap);
-		}
-		return retVal;
+		return this.entityName;
 	}
 
 }
