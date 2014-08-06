@@ -6,6 +6,7 @@ package com.thralld.client.core;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.thralld.common.aobjects.ClientCommandHandler;
@@ -43,7 +44,7 @@ public class ClientMain
 	public static void main(String[] args) throws UnknownHostException 
 	{
 		//Do initialization
-		Logger.initialize("Client:"+InetAddress.getLocalHost().getHostName());
+		Logger.initialize("Client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
 		while(true)
 		{
 			//1.Check for Internet connectivity
@@ -80,36 +81,45 @@ public class ClientMain
 				{
 					ClientCommandQuery toExecCommand = NetworkObjectSerializer.receiveObject(serverConnection, ClientCommandQuery.class);
 					Command targetCommand = ReflectionHelper.getCommandByID(toExecCommand.commandId);
-					if(ReflectionHelper.getCommandVersion(targetCommand).equals(toExecCommand.commandVersion))
+					if(targetCommand != null && ReflectionHelper.getCommandVersion(targetCommand).equals(toExecCommand.commandVersion))
 					{
 						if(NetworkObjectSerializer.sendObject(serverConnection, ClientCommandQuery.AVAILABLE))
 						{
-							//TODO:log
+							Logger.logInfo("Sending available to Server for command:"+targetCommand.toString());
 						}
 						else
 						{
-							//TODO: log
+							Logger.logError("Problem occured while sending available to server for command:"+Integer.toString(toExecCommand.commandId));
+							//We exit here, because we are no sure if server is up.
+							//We try and connect to other servers.
+							break;
 						}
 						CommandRequestInfo commandRequestInfo = (CommandRequestInfo)NetworkObjectSerializer.receiveObject(serverConnection, targetCommand.getCommandRequestInfoType());
 						ClientCommandHandler commandHandler = CommandHandlerFactory.getClientCommandHandler(commandRequestInfo);
 						if(commandHandler.processCommand(serverConnection, commandRequestInfo))
 						{
-							//TODO: log
+							Logger.logInfo("Sucessfully processed command:" + commandRequestInfo.toString());
 						}
 						else
 						{
-							//TODO: log
+							Logger.logError("Problem occured while prcessing command:" + commandRequestInfo.toString());
+							//We exit here, because we are no sure if server is up.
+							//We try and connect to other servers.
+							break;
 						}
 					}
 					else
 					{
 						if(NetworkObjectSerializer.sendObject(serverConnection, ClientCommandQuery.NOTAVAILABLE))
 						{
-							//TODO:log
+							Logger.logInfo("Succesfully sent unavilable result to server");
 						}
 						else
 						{
-							//TODO: log
+							Logger.logError("Problem occured while sending unavailable result to server");
+							//We exit here, because we are no sure if server is up.
+							//We try and connect to other servers.
+							break;
 						}
 					}
 				}
