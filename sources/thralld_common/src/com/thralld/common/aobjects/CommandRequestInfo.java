@@ -54,6 +54,12 @@ public abstract class CommandRequestInfo implements Serializable
 	 */
 	public abstract boolean setParameters(Map<String,Object> toSetParam);
 	
+	/***
+	 * 
+	 * @return
+	 */
+	public abstract Command getTargetCommand();
+	
 	@Override
 	public int hashCode()
 	{

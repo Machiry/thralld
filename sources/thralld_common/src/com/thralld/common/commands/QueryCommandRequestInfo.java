@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
 
 /**
@@ -34,6 +35,12 @@ public class QueryCommandRequestInfo extends CommandRequestInfo
 	{
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public Command getTargetCommand() 
+	{
+		return new QueryCommand();
 	}
 
 }

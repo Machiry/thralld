@@ -21,5 +21,11 @@ public class ClientCommandQuery implements Serializable
 	public static final String NOTAVAILABLE="NotAvailable";
 	public int commandId = 0;
 	public String commandVersion = "";
+	
+	@Override
+	public String toString()
+	{
+		return Integer.toString(commandId) + ":" + commandVersion;
+	}
 
 }

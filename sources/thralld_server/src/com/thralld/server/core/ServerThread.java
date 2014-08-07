@@ -8,7 +8,9 @@ import com.thralld.common.aobjects.CommandResponseInfo;
 import com.thralld.common.aobjects.NetworkConnection;
 import com.thralld.common.aobjects.ServerCommandHandler;
 import com.thralld.common.logging.Logger;
+import com.thralld.common.objects.ClientCommandQuery;
 import com.thralld.common.utilities.CommandHandlerFactory;
+import com.thralld.common.utilities.ReflectionHelper;
 
 /***
  * This class represents ServerThread:
@@ -116,8 +118,6 @@ public class ServerThread extends Thread
 			//3. If you have a command, process it.
 			if(toProcess != null)
 			{
-				//TODO: add the initial handshake
-				
 				ServerCommandHandler commandHandler = CommandHandlerFactory.getServerCommandHandler(toProcess);
 				CommandResponseInfo resultInfo = commandHandler.processCommand(targetNetworkConnecion, toProcess);
 				if(resultInfo == null)

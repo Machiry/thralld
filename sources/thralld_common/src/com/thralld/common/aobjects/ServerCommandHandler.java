@@ -3,6 +3,12 @@
  */
 package com.thralld.common.aobjects;
 
+import com.thralld.common.logging.Logger;
+import com.thralld.common.objects.ClientCommandQuery;
+import com.thralld.common.objects.ClientCommandResponse;
+import com.thralld.common.utilities.NetworkObjectSerializer;
+import com.thralld.common.utilities.ReflectionHelper;
+
 
 
 /**
@@ -21,5 +27,38 @@ public abstract class ServerCommandHandler
 	 * @return Received response info object or null (if an error occurs)
 	 */
 	public abstract CommandResponseInfo processCommand(NetworkConnection targetNetworkConnection,CommandRequestInfo toProcess);
+	
+	/***
+	 * 
+	 * @param targetNetworkConnection
+	 * @param toProcess
+	 * @return
+	 */
+	protected boolean isCommandAvailableAtClient(NetworkConnection targetNetworkConnection,CommandRequestInfo toProcess)
+	{
+		boolean retVal = false;
+		ClientCommandQuery commandQuery = new ClientCommandQuery();
+		commandQuery.commandId = toProcess.getTargetCommand().getCommandID();
+		commandQuery.commandVersion = ReflectionHelper.getCommandVersion(toProcess.getTargetCommand());
+		if(!NetworkObjectSerializer.sendObject(targetNetworkConnection, commandQuery))
+		{
+			Logger.logError("Unable to send ClientCommandQuery to network connection:"+targetNetworkConnection.toString());
+		}
+		else
+		{
+			Logger.logInfo("Sent ClientCommandQuery to network connection:"+targetNetworkConnection);
+			ClientCommandResponse resp = NetworkObjectSerializer.receiveObject(targetNetworkConnection, ClientCommandResponse.class);
+			retVal = resp != null && resp.isAvailable();
+		}
+		if(retVal)
+		{
+			Logger.logInfo("Command:" +commandQuery.toString()+" Available on:"+targetNetworkConnection.toString());
+		}
+		else
+		{
+			Logger.logInfo("Command:" +commandQuery.toString()+" Not Available on:"+targetNetworkConnection.toString());
+		}
+		return retVal;
+	}
 
 }

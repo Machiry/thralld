@@ -17,11 +17,14 @@ import com.thralld.common.aobjects.NetworkConnection;
 import com.thralld.common.interfaces.INetworkInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientCommandQuery;
+import com.thralld.common.objects.ClientCommandResponse;
 import com.thralld.common.objects.PortalServerInfo;
 import com.thralld.common.tcpnetwork.TCPConnectionSpecification;
 import com.thralld.common.tcpnetwork.TCPNetworkImplementation;
 import com.thralld.common.utilities.CommandHandlerFactory;
+import com.thralld.common.utilities.FileUtilities;
 import com.thralld.common.utilities.NetworkObjectSerializer;
+import com.thralld.common.utilities.NetworkUtilities;
 import com.thralld.common.utilities.PortalCommunicator;
 import com.thralld.common.utilities.ReflectionHelper;
 
@@ -32,22 +35,28 @@ import com.thralld.common.utilities.ReflectionHelper;
  */
 public class ClientMain 
 {
-	
+	//TODO: change this to something configurable.
 	private static final int SERVER_POLL_TIME = 2000;
+	private static final String urlServerList = "/Users/m4kh1ry/workdir/thralld/sources/thralld_common/files/alexa_25000";
+	private static final int NET_CONNECTIVITY_CHECK_TIMEOUT = 2000;
 	
-
 	/**
 	 * @param args
 	 * @throws UnknownHostException 
+	 * @throws InterruptedException 
 	 */
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws UnknownHostException 
+	public static void main(String[] args) throws UnknownHostException, InterruptedException 
 	{
 		//Do initialization
 		Logger.initialize("Client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
 		while(true)
 		{
 			//1.Check for Internet connectivity
+			while(!NetworkUtilities.isInternetConnectionUp(FileUtilities.readLines(urlServerList)))
+			{
+				Thread.sleep(NET_CONNECTIVITY_CHECK_TIMEOUT);
+			}
 			
 			//2. Get list of available servers from portal.
 			List<PortalServerInfo> availableSerInfos = new ArrayList<PortalServerInfo>();
@@ -83,7 +92,7 @@ public class ClientMain
 					Command targetCommand = ReflectionHelper.getCommandByID(toExecCommand.commandId);
 					if(targetCommand != null && ReflectionHelper.getCommandVersion(targetCommand).equals(toExecCommand.commandVersion))
 					{
-						if(NetworkObjectSerializer.sendObject(serverConnection, ClientCommandQuery.AVAILABLE))
+						if(NetworkObjectSerializer.sendObject(serverConnection,ClientCommandResponse.getAvailableResponse()))
 						{
 							Logger.logInfo("Sending available to Server for command:"+targetCommand.toString());
 						}
@@ -110,7 +119,7 @@ public class ClientMain
 					}
 					else
 					{
-						if(NetworkObjectSerializer.sendObject(serverConnection, ClientCommandQuery.NOTAVAILABLE))
+						if(NetworkObjectSerializer.sendObject(serverConnection, ClientCommandResponse.getNotAvailableResponse()))
 						{
 							Logger.logInfo("Succesfully sent unavilable result to server");
 						}
