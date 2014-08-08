@@ -46,6 +46,13 @@ public class PortalCommunicator
 	{
 		boolean toRet = true;
 		//TODO: Add implementation
+		//Do we need this functionality?
+		/*
+		 * IMO, this breaches security. See, we start a server and someone authorized should update the portal
+		 * rather than automatically by server.
+		 * 
+		 * Need to think through.
+		 */
 		return toRet;
 	}
 

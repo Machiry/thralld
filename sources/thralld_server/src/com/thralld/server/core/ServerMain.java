@@ -2,6 +2,7 @@
  * 
  */
 package com.thralld.server.core;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
+import com.thralld.common.objects.PortalServerInfo;
+import com.thralld.common.utilities.PortalCommunicator;
 import com.thralld.common.utilities.ReflectionHelper;
 import com.thralld.server.interfaces.IServerStatusInterface;
 
@@ -23,6 +26,9 @@ public class ServerMain implements IServerStatusInterface
 {
 	public HashMap<ClientInfo,ServerThread> currentProcessingThreads = new HashMap<ClientInfo, ServerThread>();
 	private ServerMainThread currentServerMain = null;
+	private int serverPreference = 1;
+	
+	
 	
 	@Override
 	public List<ClientInfo> getClientInfoByName(String clientName)
@@ -64,7 +70,20 @@ public class ServerMain implements IServerStatusInterface
 				currentServerMain = new ServerMainThread(portNumber, this);
 				currentServerMain.start();
 				Logger.logInfo("Started server thread on port:"+Integer.toString(portNumber));
-				retVal = false;
+				
+				PortalServerInfo toPush = new PortalServerInfo();
+				toPush.serverNetworkName = InetAddress.getLocalHost().getHostAddress();
+				toPush.serverNetworkPort = Integer.toString(portNumber);
+				toPush.preferenceInfo = this.serverPreference;
+				if(PortalCommunicator.updateServerInfo(toPush))
+				{
+					Logger.logInfo("Successfully pushed server info to the portal");
+				}
+				else
+				{
+					Logger.logError("Problem occured while trying to push server info to portal");
+				}
+				retVal = true;
 			}
 			catch(Exception e)
 			{
@@ -120,6 +139,19 @@ public class ServerMain implements IServerStatusInterface
 			Logger.logException("Problem occured while trying to get command parameters", e);
 		}
 		return toRet;
+	}
+
+	@Override
+	public void setServerPreference(int preferenceNumber) 
+	{
+		this.serverPreference = preferenceNumber;
+		
+	}
+
+	@Override
+	public int getServerPreference() 
+	{
+		return this.serverPreference;
 	}
 
 }

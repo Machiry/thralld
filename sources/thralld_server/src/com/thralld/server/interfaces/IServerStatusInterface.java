@@ -59,5 +59,19 @@ public interface IServerStatusInterface
 	 * @return List of parameter names supported by given command.
 	 */
 	public abstract List<String> getCommandParameters(String commandName);
+	
+	/***
+	 * This method sets selection preference of the current server.
+	 * 
+	 * @param preferenceNumber New preference number to set.
+	 */
+	public abstract void setServerPreference(int preferenceNumber);
+	
+	/***
+	 * This method gets the current selection preference of the server.
+	 * 
+	 * @return preference number of the server
+	 */
+	public abstract int getServerPreference();
 
 }
