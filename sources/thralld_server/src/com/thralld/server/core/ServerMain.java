@@ -14,7 +14,8 @@ import com.thralld.common.utilities.ReflectionHelper;
 import com.thralld.server.interfaces.IServerStatusInterface;
 
 /**
- * This is an implementation of ServerStatusInterface.
+ * This is an implementation of ServerStatusInterface
+ * 
  * @author m4kh1ry
  *
  */
