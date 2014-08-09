@@ -30,6 +30,9 @@ import com.thralld.common.utilities.ReflectionHelper;
 
 
 /**
+ * This is the main processing engine of client.
+ * 
+ * Refer Dataflow diagrams to understand more about client processing.
  * @author m4kh1ry
  *
  */

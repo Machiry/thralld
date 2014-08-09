@@ -26,6 +26,8 @@ public class PortalCommunicator
 	{
 		ArrayList<PortalServerInfo> toRet = new ArrayList<PortalServerInfo>();
 		//TODO: Add implementation
+		
+		//Here we are sorting based on preference, server having highest preference will be at the first
 		Collections.sort(toRet, new Comparator<PortalServerInfo>() 
 				{
 					@Override
