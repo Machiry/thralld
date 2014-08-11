@@ -52,7 +52,7 @@ public class ClientMain
 	public static void main(String[] args) throws UnknownHostException, InterruptedException 
 	{
 		//Do initialization
-		Logger.initialize("Client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
+		Logger.initialize("thralld_client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
 		while(true)
 		{
 			//1.Check for Internet connectivity
