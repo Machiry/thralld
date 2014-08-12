@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="thralld_common" default="compile">
+  
+  <dirname property="thralld_common.basedir" file="${ant.file.thralld_common}"/>
+
+  <property name="src.dir" location="${thralld_common.basedir}/src" />
+  <property name="build.dir" location="${thralld_common.basedir}/bin" />
+  <property name="lib.dir" location="${thralld_common.basedir}/libs" />
+
+  
+  <!-- Add jars to the classpath -->
+  <path id="thralld_common.classpath">
+        <pathelement location="bin"/>
+		<pathelement location="${lib.dir}/reflections-0.9.9-RC1.jar"/>
+  </path>
+	  
+  <target name="clean">
+    <delete dir="${build.dir}" />
+  </target>
+
+  <target name="makedir">
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <target name="compile">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+		<src path="src"/> 
+		<classpath refid="thralld_common.classpath"/>
+    </javac>
+  </target>
+
+  <target name="jar" depends="clean,makedir,compile">
+    <jar destfile="${build.dir}/thralld_common.jar"
+         basedir="${build.dir}"
+         includes="**/*.class">
+    <fileset dir="${build.dir}" includes="**/*.class" />
+    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+    </jar>
+  </target>
+
+</project>

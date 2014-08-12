@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="thralld_server" default="compile">
+ 
+  <!-- include build.xml of thralld_common -->
+  <include file="../thralld_common/build.xml" as="thralld_common"/>
+  
+  <dirname property="thralld_server.basedir" file="${ant.file.thralld_server}"/>
+  
+  <property name="tds.src.dir" location="${thralld_server.basedir}/src" />
+  <property name="tds.build.dir" location="${thralld_server.basedir}/bin" />
+  <property name="tds.lib.dir" location="${thralld_server.basedir}/libs" />
+
+  
+  <!-- Add jars to the classpath -->
+  <path id="thralld_server.classpath">
+        <pathelement location="${tds.build.dir}"/>
+  </path>
+
+  <path id="tdc.classpath">
+		<pathelement location="${build.dir}"/>
+  </path>
+	  
+  <target name="tds.clean">
+    <delete dir="${tds.build.dir}" />
+  </target>
+
+  <target name="tds.makedir">
+    <mkdir dir="${tds.build.dir}" />
+  </target>
+
+  <target name="tds.compile" depends="thralld_common.compile">
+    <javac srcdir="${tds.src.dir}" destdir="${tds.build.dir}" includeantruntime="false">
+		<src path="${tds.src.dir}"/> 
+		<classpath refid="thralld_server.classpath"/>
+		<classpath refid="tdc.classpath"/>
+    </javac>
+  </target>
+
+  <target name="tds.jar" depends="thralld_common.jar,tds.clean,tds.makedir,tds.compile">
+    <jar destfile="${tds.build.dir}/thralld_server.jar"
+         basedir="${tds.build.dir}"
+         includes="**/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="com.thralld.server.ui.CommandLineUI" />
+      </manifest>
+    <fileset dir="${tds.build.dir}" includes="**/*.class" />
+	<zipgroupfileset dir="${build.dir}" includes="**/*.jar" />
+    </jar>
+  </target>
+
+</project>

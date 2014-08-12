@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="thralld_client" default="compile" basedir=".">
+  
+  <property name="src.dir" location="src" />
+  <property name="build.dir" location="bin" />
+  <property name="lib.dir" location="lib" />
+
+  
+  <!-- Add jars to the classpath -->
+  <path id="thralld_client.classpath">
+        <pathelement location="bin"/>
+  </path>
+	  
+  <target name="clean">
+    <delete dir="${build.dir}" />
+  </target>
+
+  <target name="makedir">
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <target name="compile">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+		<src path="src"/> 
+		<classpath refid="thralld_server.classpath"/>
+    </javac>
+  </target>
+
+  <target name="jar" depends="clean,makedir,compile">
+    <jar destfile="${build.dir}/thralld_server.jar"
+         basedir="${build.dir}"
+         includes="**/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="com.thralld.server.ui.CommandLineUI" />
+      </manifest>
+    <fileset dir="${build.dir}" includes="**/*.class" />
+    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+    </jar>
+  </target>
+
+</project>
