@@ -28,7 +28,7 @@
     <mkdir dir="${build.dir}" />
   </target>
 
-  <target name="compile" depends="thralld_common.compile">
+  <target name="compile" depends="makedir,thralld_common.compile">
     <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
 		<src path="${src.dir}"/> 
 		<classpath refid="classpath"/>
@@ -47,5 +47,24 @@
 	<zipgroupfileset dir="${thralld_common.build.dir}" includes="**/*.jar" />
     </jar>
   </target>
+ 
+  <target name="run" depends="compile">
+	<java fork="true" classname="com.thralld.server.ui.CommandLineUI">
+		<classpath>
+			<pathelement location="${build.dir}"/>
+			<pathelement location="${thralld_common.build.dir}"/>
+		</classpath>
+	</java>
+  </target>
 
+  <target name="debug" depends="compile">
+	<java fork="true" classname="com.thralld.server.ui.CommandLineUI">
+		<jvmarg value="-Xdebug"/>
+		<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"/>
+		<classpath>
+			<pathelement location="${build.dir}"/>
+			<pathelement location="${thralld_common.build.dir}"/>
+		</classpath>
+	</java>
+  </target>
 </project>

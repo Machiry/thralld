@@ -36,7 +36,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	private static String getCommandFromConsole()
 	{
 		String toRet = "";
-		System.out.print(commandPrompt);
+		System.out.println(commandPrompt);
 		BufferedReader bufferedInputReader = new BufferedReader(new InputStreamReader(System.in));
 		try 
 		{
@@ -119,6 +119,8 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		//Initialize Logger
 		Logger.initialize("thralld_server started at:"+(new Date()).toString());
 		
+		System.out.println("thralld_server started at:"+(new Date()).toString());
+		
 		//Setup available commands
 		setupAvailableCommands();
 		
@@ -127,8 +129,10 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		
 		while(true)
 		{
+			//System.out.println("Waiting for commands");
 			//1. Get the command entered
 			String currCommandLine = getCommandFromConsole();
+			
 			if(currCommandLine != null)
 			{
 				currCommandLine = currCommandLine.trim();
