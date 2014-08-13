@@ -1,40 +1,40 @@
 <?xml version="1.0"?>
-<project name="thralld_common" default="compile">
+<project name="thralld_common" default="thralld_common.compile">
   
   <dirname property="thralld_common.basedir" file="${ant.file.thralld_common}"/>
 
-  <property name="src.dir" location="${thralld_common.basedir}/src" />
-  <property name="build.dir" location="${thralld_common.basedir}/bin" />
-  <property name="lib.dir" location="${thralld_common.basedir}/libs" />
+  <property name="thralld_common.src.dir" location="${thralld_common.basedir}/src" />
+  <property name="thralld_common.build.dir" location="${thralld_common.basedir}/bin" />
+  <property name="thralld_common.lib.dir" location="${thralld_common.basedir}/libs" />
 
   
   <!-- Add jars to the classpath -->
   <path id="thralld_common.classpath">
-        <pathelement location="bin"/>
-		<pathelement location="${lib.dir}/reflections-0.9.9-RC1.jar"/>
+        <pathelement location="${thralld_common.basedir}/bin"/>
+		<pathelement location="${thralld_common.lib.dir}/reflections-0.9.9-RC1.jar"/>
   </path>
 	  
-  <target name="clean">
-    <delete dir="${build.dir}" />
+  <target name="thralld_common.clean">
+    <delete dir="${thralld_common.build.dir}" />
   </target>
 
-  <target name="makedir">
-    <mkdir dir="${build.dir}" />
+  <target name="thralld_common.makedir">
+    <mkdir dir="${thralld_common.build.dir}" />
   </target>
 
-  <target name="compile">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
-		<src path="src"/> 
+  <target name="thralld_common.compile">
+    <javac srcdir="${thralld_common.basedir}/src" destdir="${thralld_common.basedir}/bin" includeantruntime="false">
+		<src path="${thralld_common.basedir}/src"/> 
 		<classpath refid="thralld_common.classpath"/>
     </javac>
   </target>
 
-  <target name="jar" depends="clean,makedir,compile">
-    <jar destfile="${build.dir}/thralld_common.jar"
-         basedir="${build.dir}"
+  <target name="thralld_common.jar" depends="thralld_common.clean,thralld_common.makedir,thralld_common.compile">
+    <jar destfile="${thralld_common.build.dir}/thralld_common.jar"
+         basedir="${thralld_common.build.dir}"
          includes="**/*.class">
-    <fileset dir="${build.dir}" includes="**/*.class" />
-    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+    <fileset dir="${thralld_common.build.dir}" includes="**/*.class" />
+    <zipgroupfileset dir="${thralld_common.lib.dir}" includes="**/*.jar" />
     </jar>
   </target>
 

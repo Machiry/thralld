@@ -1,14 +1,23 @@
 <?xml version="1.0"?>
-<project name="thralld_client" default="compile" basedir=".">
+<project name="thralld_client" default="compile">
+ 
+  <!-- include build.xml of thralld_common -->
+  <import file="../thralld_common/build.xml"/>
   
-  <property name="src.dir" location="src" />
-  <property name="build.dir" location="bin" />
-  <property name="lib.dir" location="lib" />
+  <dirname property="thralld_client.basedir" file="${ant.file.thralld_client}"/>
+  
+  <property name="src.dir" location="${thralld_client.basedir}/src" />
+  <property name="build.dir" location="${thralld_client.basedir}/bin" />
+  <property name="lib.dir" location="${thralld_client.basedir}/libs" />
 
   
   <!-- Add jars to the classpath -->
-  <path id="thralld_client.classpath">
-        <pathelement location="bin"/>
+  <path id="classpath">
+        <pathelement location="${build.dir}"/>
+  </path>
+
+  <path id="thralld_common.classpath">
+		<pathelement location="${thralld_common.build.dir}"/>
   </path>
 	  
   <target name="clean">
@@ -19,22 +28,23 @@
     <mkdir dir="${build.dir}" />
   </target>
 
-  <target name="compile">
+  <target name="compile" depends="thralld_common.compile">
     <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
-		<src path="src"/> 
-		<classpath refid="thralld_server.classpath"/>
+		<src path="${src.dir}"/> 
+		<classpath refid="classpath"/>
+		<classpath refid="thralld_common.classpath"/>
     </javac>
   </target>
 
-  <target name="jar" depends="clean,makedir,compile">
-    <jar destfile="${build.dir}/thralld_server.jar"
+  <target name="jar" depends="thralld_common.jar,clean,makedir,compile">
+    <jar destfile="${build.dir}/thralld_client.jar"
          basedir="${build.dir}"
          includes="**/*.class">
       <manifest>
-        <attribute name="Main-Class" value="com.thralld.server.ui.CommandLineUI" />
+        <attribute name="Main-Class" value="com.thralld.client.core.ClientMain" />
       </manifest>
     <fileset dir="${build.dir}" includes="**/*.class" />
-    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+	<zipgroupfileset dir="${thralld_common.build.dir}" includes="**/*.jar" />
     </jar>
   </target>
 
