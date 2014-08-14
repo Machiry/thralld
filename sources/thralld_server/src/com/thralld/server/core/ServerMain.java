@@ -96,11 +96,19 @@ public class ServerMain implements IServerStatusInterface
 	@Override
 	public boolean stopServer()
 	{
+		boolean retVal = false;
 		if(this.currentServerMain != null && !this.currentServerMain.isStopped)
 		{
-			return this.currentServerMain.stopMainThread();
+			retVal = this.currentServerMain.stopMainThread();
+			synchronized (currentProcessingThreads) 
+			{
+				for(ServerThread currClientThread:currentProcessingThreads.values())
+				{
+					retVal = currClientThread.stopSeverThread() && retVal;
+				}
+			}
 		}
-		return false;
+		return retVal;
 	}
 	
 	@Override

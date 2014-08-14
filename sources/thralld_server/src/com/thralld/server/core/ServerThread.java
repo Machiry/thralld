@@ -7,6 +7,7 @@ import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.aobjects.CommandResponseInfo;
 import com.thralld.common.aobjects.NetworkConnection;
 import com.thralld.common.aobjects.ServerCommandHandler;
+import com.thralld.common.interfaces.INetworkInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.utilities.CommandHandlerFactory;
 
@@ -29,14 +30,17 @@ public class ServerThread extends Thread
 	private ArrayList<CommandResponseInfo> commandResults = new ArrayList<CommandResponseInfo>();
 	//The Network connection on which the communication needs to be take place.
 	private NetworkConnection targetNetworkConnecion = null;
+	//The target network interface to use while working with network.
+	private INetworkInterface targetNetworkInterface = null;
 	//This indicates if an error occurred while processing a request.
 	public boolean isErrorOccured = true;
 	//Message queue poll time interval.
 	private static final int pollTimeMilliseconds = 1000;
 	
-	public ServerThread(NetworkConnection netConn)
+	public ServerThread(NetworkConnection netConn,INetworkInterface netInter)
 	{
 		this.targetNetworkConnecion = netConn;
+		this.targetNetworkInterface = netInter;
 	}
 	
 	/***
@@ -55,6 +59,21 @@ public class ServerThread extends Thread
 			}
 		}
 		return false;
+	}
+	
+	/***
+	 * This method is used to stop this client processing thread.
+	 * 
+	 * @return true/false depending on whether the closing of network is successful or not.
+	 */
+	public synchronized boolean stopSeverThread()
+	{
+		boolean retVal = false;
+		if(this.targetNetworkConnecion != null && this.targetNetworkInterface != null)
+		{
+			retVal = this.targetNetworkInterface.closeConnection(this.targetNetworkConnecion);
+		}
+		return retVal;
 	}
 	
 	/***

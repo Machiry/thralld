@@ -55,7 +55,7 @@ public class ServerMainThread extends Thread
 			}
 			
 			//Start a thread for the client.
-			ServerThread clientThread = new ServerThread(clientConnection);
+			ServerThread clientThread = new ServerThread(clientConnection,targetNetInterface);
 			Logger.logInfo("Got connection request from:"+clientConnection.getClientInfo().toString());
 			serverMain.updateNewClient(clientConnection.getClientInfo(), clientThread);
 			Logger.logInfo("Starting new Server thread for:"+clientConnection.getClientInfo().toString());
