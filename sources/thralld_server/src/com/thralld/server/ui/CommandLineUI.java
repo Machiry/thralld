@@ -17,6 +17,7 @@ import com.thralld.common.logging.Logger;
 import com.thralld.server.core.ServerMain;
 import com.thralld.server.interfaces.IServerStatusInterface;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
+import com.thralld.server.ui.interfaces.IExitCommandHandler;
 import com.thralld.server.ui.interfaces.IHelpCommandHandler;
 import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
 
@@ -25,7 +26,7 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  * @author m4kh1ry
  *
  */
-public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,IHelpCommandHandler
+public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,IHelpCommandHandler,IExitCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -36,7 +37,8 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	private static String getCommandFromConsole()
 	{
 		String toRet = "";
-		System.out.println(commandPrompt);
+		System.out.print(commandPrompt);
+		System.out.flush();
 		BufferedReader bufferedInputReader = new BufferedReader(new InputStreamReader(System.in));
 		try 
 		{
@@ -55,6 +57,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		availableCommands.put("help", commonCommandHandler);
 		availableCommands.put("status",commonCommandHandler);
 		availableCommands.put("clients", commonCommandHandler);
+		availableCommands.put("exit", commonCommandHandler);
 		
 	}
 	
@@ -102,6 +105,18 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 				if(!cmdHandler.handleClientsCommand(providedCommandLine, System.out, serverInterface))
 				{
 					cmdHandler.displayClientsCommandHelpMessage(System.out);
+				}
+			}
+			
+		}
+		if(command.equals("exit"))
+		{
+			IExitCommandHandler cmdHandler = (IExitCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				if(!cmdHandler.handleExitCommand(providedCommandLine, System.out, serverInterface))
+				{
+					cmdHandler.displayExitCommandHelpMessage(System.out);
 				}
 			}
 			
@@ -168,14 +183,18 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			PrintStream outputStream,
 			IServerStatusInterface targetServerInterface) 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		outputStream.println("Available Commands:");
+		for(String commandName:availableCommands.keySet())
+		{
+			outputStream.println(" " + commandName);
+		}
+		return true;
 	}
 
 	@Override
 	public void displayHelpCommandHelpMessage(PrintStream outputStream) 
 	{
-		// TODO Auto-generated method stub
+		outputStream.println("Usage: help");
 		
 	}
 
@@ -213,6 +232,32 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean handleExitCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		//Stop the server.
+		Logger.logInfo("Trying to stop server.");
+		if(serverInterface.stopServer())
+		{
+			Logger.logInfo("Server Sucessfully stopped");
+		}
+		else
+		{
+			Logger.logInfo("Problem occured while trying to stop server");
+		}
+		Logger.logInfo("Exiting the server");
+		System.exit(0);
+		return true;
+	}
+
+	@Override
+	public void displayExitCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: exit");
 	}
 
 }

@@ -26,6 +26,7 @@ public class Logger
 		if(!isInitialized && loggerName != null)
 		{
 			targetLogger = java.util.logging.Logger.getLogger(loggerName);
+			logInfo("Logger initialized");
 		}
 	}
 	
