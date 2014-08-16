@@ -9,6 +9,7 @@ import com.thralld.common.interfaces.INetworkInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.tcpnetwork.TCPConnectionSpecification;
 import com.thralld.common.tcpnetwork.TCPNetworkImplementation;
+import com.thralld.server.interfaces.IServerThreadFeedback;
 
 /**
  * This is the server main thread.
@@ -20,16 +21,16 @@ import com.thralld.common.tcpnetwork.TCPNetworkImplementation;
 public class ServerMainThread extends Thread 
 {
 	private ConnectionSpecification targetConnectionSpecification = null;
-	private ServerMain serverMain = null;
+	private IServerThreadFeedback serverMainFeedback = null;
 	INetworkInterface targetNetInterface = null;
 	NetworkConnection serverConnection = null;
 	public boolean isStopped = false;
 	
-	public ServerMainThread(int portno,ServerMain parentServerMain) throws Exception
+	public ServerMainThread(int portno,IServerThreadFeedback parentServerMain) throws Exception
 	{
 		String[] parms = new String[]{null,Integer.toString(portno),null,null};
 		targetConnectionSpecification = TCPConnectionSpecification.getConnectionSpecification(parms);
-		this.serverMain = parentServerMain;
+		this.serverMainFeedback = parentServerMain;
 		targetNetInterface = new TCPNetworkImplementation();
 		serverConnection = targetNetInterface.openConnection(targetConnectionSpecification);
 		if(serverConnection == null)
@@ -55,9 +56,8 @@ public class ServerMainThread extends Thread
 			}
 			
 			//Start a thread for the client.
-			ServerThread clientThread = new ServerThread(clientConnection,targetNetInterface);
+			ServerThread clientThread = new ServerThread(clientConnection,targetNetInterface,this.serverMainFeedback);
 			Logger.logInfo("Got connection request from:"+clientConnection.getClientInfo().toString());
-			serverMain.updateNewClient(clientConnection.getClientInfo(), clientThread);
 			Logger.logInfo("Starting new Server thread for:"+clientConnection.getClientInfo().toString());
 			clientThread.start();
 		}

@@ -15,6 +15,7 @@ import com.thralld.common.objects.PortalServerInfo;
 import com.thralld.common.utilities.PortalCommunicator;
 import com.thralld.common.utilities.ReflectionHelper;
 import com.thralld.server.interfaces.IServerStatusInterface;
+import com.thralld.server.interfaces.IServerThreadFeedback;
 
 /**
  * This is an implementation of ServerStatusInterface
@@ -22,7 +23,7 @@ import com.thralld.server.interfaces.IServerStatusInterface;
  * @author m4kh1ry
  *
  */
-public class ServerMain implements IServerStatusInterface
+public class ServerMain implements IServerStatusInterface,IServerThreadFeedback
 {
 	public HashMap<ClientInfo,ServerThread> currentProcessingThreads = new HashMap<ClientInfo, ServerThread>();
 	private ServerMainThread currentServerMain = null;
@@ -42,14 +43,6 @@ public class ServerMain implements IServerStatusInterface
 			}
 		}
 		return toRet;
-	}
-	
-	public void updateNewClient(ClientInfo newClient,ServerThread newCliThread)
-	{
-		synchronized (currentProcessingThreads) 
-		{
-			currentProcessingThreads.put(newClient, newCliThread);
-		}
 	}
 	
 	@Override
@@ -104,7 +97,7 @@ public class ServerMain implements IServerStatusInterface
 			{
 				for(ServerThread currClientThread:currentProcessingThreads.values())
 				{
-					retVal = currClientThread.stopSeverThread() && retVal;
+					currClientThread.terminateServerThread();
 				}
 			}
 		}
@@ -160,6 +153,32 @@ public class ServerMain implements IServerStatusInterface
 	public int getServerPreference() 
 	{
 		return this.serverPreference;
+	}
+
+	//Implementing methods of IServerThreadFeedback
+	@Override
+	public void updateNewClent(ClientInfo newClientInfo,
+			ServerThread newServerThread) 
+	{
+		synchronized (currentProcessingThreads) 
+		{
+			currentProcessingThreads.put(newClientInfo, newServerThread);
+		}
+		
+	}
+
+	@Override
+	public void notifyTerminatingClient(ClientInfo toRemoveClientInfo,
+			ServerThread toRemoveServerThread) 
+	{
+		synchronized (currentProcessingThreads) 
+		{
+			if(currentProcessingThreads.containsKey(toRemoveClientInfo))
+			{
+				currentProcessingThreads.remove(toRemoveClientInfo);
+			}
+		}
+		
 	}
 
 }

@@ -3,6 +3,7 @@
  */
 package com.thralld.common.utilities;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,8 @@ import com.thralld.common.objects.PortalServerInfo;
  */
 public class PortalCommunicator 
 {
+	//TODO: change this and read from properties.
+	private static final String serverListUrl = "http://machiry.org/error.php";
 	/***
 	 * This method gets the available server list from the portal.
 	 * 
@@ -25,7 +28,38 @@ public class PortalCommunicator
 	public static List<PortalServerInfo> getServerList()
 	{
 		ArrayList<PortalServerInfo> toRet = new ArrayList<PortalServerInfo>();
-		//TODO: Add implementation
+		List<String> webpageContents = NetworkUtilities.readWebPage(serverListUrl);
+		for(String currLine:webpageContents)
+		{
+			if(currLine != null)
+			{
+				String[] parts = currLine.split(":");
+				if(parts.length == 3)
+				{
+					try
+					{
+						String serverIPAddr = null;
+						String portNumber = null;
+						int preferenceNumber = 0;
+						if(InetAddress.getAllByName(parts[0]) != null && Integer.parseInt(parts[1]) > 0 && Integer.parseInt(parts[2]) > 0)
+						{
+							serverIPAddr = parts[0];
+							portNumber = parts[1];
+							preferenceNumber = Integer.parseInt(parts[2]);
+						}
+						PortalServerInfo currServInfo = new PortalServerInfo();
+						currServInfo.serverNetworkName = serverIPAddr;
+						currServInfo.serverNetworkPort = portNumber;
+						currServInfo.preferenceInfo = preferenceNumber;
+						toRet.add(currServInfo);
+					}
+					catch(Exception e)
+					{
+						//We ignore.
+					}
+				}
+			}
+		}
 		
 		//Here we are sorting based on preference, server having highest preference will be at the first
 		Collections.sort(toRet, new Comparator<PortalServerInfo>() 

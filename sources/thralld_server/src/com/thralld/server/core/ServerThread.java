@@ -10,6 +10,7 @@ import com.thralld.common.aobjects.ServerCommandHandler;
 import com.thralld.common.interfaces.INetworkInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.utilities.CommandHandlerFactory;
+import com.thralld.server.interfaces.IServerThreadFeedback;
 
 /***
  * This class represents ServerThread:
@@ -36,11 +37,16 @@ public class ServerThread extends Thread
 	public boolean isErrorOccured = true;
 	//Message queue poll time interval.
 	private static final int pollTimeMilliseconds = 1000;
+	//This variable indicates that current thread need to be terminated.
+	private boolean toTerminate = false;
+	//This is the interface used to provide feedback about creation and termination of threads.
+	private IServerThreadFeedback serverMainFeedback = null;
 	
-	public ServerThread(NetworkConnection netConn,INetworkInterface netInter)
+	public ServerThread(NetworkConnection netConn,INetworkInterface netInter,IServerThreadFeedback serverMainFeedback)
 	{
 		this.targetNetworkConnecion = netConn;
 		this.targetNetworkInterface = netInter;
+		this.serverMainFeedback = serverMainFeedback;
 	}
 	
 	/***
@@ -61,12 +67,7 @@ public class ServerThread extends Thread
 		return false;
 	}
 	
-	/***
-	 * This method is used to stop this client processing thread.
-	 * 
-	 * @return true/false depending on whether the closing of network is successful or not.
-	 */
-	public synchronized boolean stopSeverThread()
+	private synchronized boolean stopSeverThreadConnection()
 	{
 		boolean retVal = false;
 		if(this.targetNetworkConnecion != null && this.targetNetworkInterface != null)
@@ -104,16 +105,26 @@ public class ServerThread extends Thread
 	}
 	
 	/***
+	 * This function terminates the current thread servicing client.
+	 */
+	public void terminateServerThread()
+	{
+		toTerminate = true;
+		stopSeverThreadConnection();
+	}
+	
+	/***
 	 *The main message request processing method.
 	 */
 	@Override
 	public void run()
 	{
-		while(true)
+		this.serverMainFeedback.updateNewClent(this.targetNetworkConnecion.getClientInfo(), this);
+		while(true && !toTerminate)
 		{
 			CommandRequestInfo toProcess = null;
 			//1. Wait till you see any command.
-			while(toProcessCommands.size() == 0)
+			while(toProcessCommands.size() == 0 && !toTerminate)
 			{
 				//Do nothing. Just sleep.
 				try 
@@ -124,6 +135,10 @@ public class ServerThread extends Thread
 					Logger.logException("Error occured while sleeping", e);
 				}
 			}
+			if(toTerminate)
+			{
+				break;
+			}
 			//2. One you see a command, try to get the command.
 			synchronized(toProcessCommands)
 			{
@@ -131,6 +146,10 @@ public class ServerThread extends Thread
 				{
 					toProcess = toProcessCommands.remove(0);
 				}
+			}
+			if(toTerminate)
+			{
+				break;
 			}
 			//3. If you have a command, process it.
 			if(toProcess != null)
@@ -150,6 +169,16 @@ public class ServerThread extends Thread
 					commandResults.add(resultInfo);
 				}
 			}
+			if(toTerminate)
+			{
+				break;
+			}
 		}
+		//Terminate the connection
+		Logger.logInfo("Closing the connection to client thread:"+this.targetNetworkConnecion.toString());
+		//Close the connection
+		stopSeverThreadConnection();
+		//Notify the main thread that client has terminated.
+		this.serverMainFeedback.notifyTerminatingClient(this.targetNetworkConnecion.getClientInfo(), this);
 	}
 }
