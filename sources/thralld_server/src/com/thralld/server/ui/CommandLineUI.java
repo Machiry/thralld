@@ -63,27 +63,26 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	
 	private static void displayHelpMessage()
 	{
-		IHelpCommandHandler cmdHandler = (IHelpCommandHandler)availableCommands.get("help");
-		if(cmdHandler != null)
-		{
-			if(!cmdHandler.handleHelpCommand("", System.out, serverInterface))
-			{
-				cmdHandler.displayHelpCommandHelpMessage(System.out);
-			}
-		}
+		handleCommand("help","help");
 	}
 	
 	private static void handleCommand(String command,String providedCommandLine)
 	{
+		if(!runHandler(command, providedCommandLine))
+		{
+			runCommandHelp(command);
+		}
+	}
+	
+	private static boolean runHandler(String command,String providedCommandLine)
+	{
+		boolean retVal = false;
 		if(command.equals("help"))
 		{
 			IHelpCommandHandler cmdHandler = (IHelpCommandHandler)availableCommands.get(command);
 			if(cmdHandler != null)
 			{
-				if(!cmdHandler.handleHelpCommand(providedCommandLine, System.out, serverInterface))
-				{
-					cmdHandler.displayHelpCommandHelpMessage(System.out);
-				}
+				retVal = cmdHandler.handleHelpCommand(providedCommandLine, System.out, serverInterface);
 			}
 		}
 		if(command.equals("status"))
@@ -91,10 +90,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			IServerStatusCommandHandler cmdHandler = (IServerStatusCommandHandler)availableCommands.get(command);
 			if(cmdHandler != null)
 			{
-				if(!cmdHandler.handleServerStatusCommand(providedCommandLine, System.out, serverInterface))
-				{
-					cmdHandler.displayServerStatusCommandHelpMessage(System.out);
-				}
+				retVal = cmdHandler.handleServerStatusCommand(providedCommandLine, System.out, serverInterface);
 			}
 		}
 		if(command.equals("clients"))
@@ -102,10 +98,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			IClientsCommandHandler cmdHandler = (IClientsCommandHandler)availableCommands.get(command);
 			if(cmdHandler != null)
 			{
-				if(!cmdHandler.handleClientsCommand(providedCommandLine, System.out, serverInterface))
-				{
-					cmdHandler.displayClientsCommandHelpMessage(System.out);
-				}
+				retVal = cmdHandler.handleClientsCommand(providedCommandLine, System.out, serverInterface);
 			}
 			
 		}
@@ -114,15 +107,50 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			IExitCommandHandler cmdHandler = (IExitCommandHandler)availableCommands.get(command);
 			if(cmdHandler != null)
 			{
-				if(!cmdHandler.handleExitCommand(providedCommandLine, System.out, serverInterface))
-				{
-					cmdHandler.displayExitCommandHelpMessage(System.out);
-				}
+				retVal = cmdHandler.handleExitCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
+		return retVal;
+	}
+
+	private static void runCommandHelp(String command)
+	{
+		if(command.equals("help"))
+		{
+			IHelpCommandHandler cmdHandler = (IHelpCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayHelpCommandHelpMessage(System.out);
+			}
+		}
+		if(command.equals("status"))
+		{
+			IServerStatusCommandHandler cmdHandler = (IServerStatusCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayServerStatusCommandHelpMessage(System.out);
+			}
+		}
+		if(command.equals("clients"))
+		{
+			IClientsCommandHandler cmdHandler = (IClientsCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayClientsCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("exit"))
+		{
+			IExitCommandHandler cmdHandler = (IExitCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayExitCommandHelpMessage(System.out);
 			}
 			
 		}
 	}
-
 	
 	
 	/**
@@ -186,7 +214,10 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		outputStream.println("Available Commands:");
 		for(String commandName:availableCommands.keySet())
 		{
-			outputStream.println(" " + commandName);
+			outputStream.println(commandName);
+			outputStream.println();
+			runCommandHelp(commandName);
+			outputStream.println();
 		}
 		return true;
 	}
@@ -195,7 +226,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	public void displayHelpCommandHelpMessage(PrintStream outputStream) 
 	{
 		outputStream.println("Usage: help");
-		
+		outputStream.println("This command displays available commands and other help information regarding server");
 	}
 
 	
@@ -212,7 +243,8 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	@Override
 	public void displayClientsCommandHelpMessage(PrintStream outputStream) 
 	{
-		// TODO Auto-generated method stub
+		outputStream.println("Usage: clients");
+		outputStream.println("This command displays currently connected clients.");
 		
 	}
 
@@ -258,6 +290,8 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 	public void displayExitCommandHelpMessage(PrintStream outputStream) 
 	{
 		outputStream.println("Usage: exit");
+		outputStream.println("This command terminates the current server and closes connections to clients");
+		
 	}
 
 }

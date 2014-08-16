@@ -16,10 +16,6 @@
         <pathelement location="${build.dir}"/>
   </path>
 
-  <path id="thralld_common.classpath">
-		<pathelement location="${thralld_common.build.dir}"/>
-  </path>
-	  
   <target name="clean">
     <delete dir="${build.dir}" />
   </target>
