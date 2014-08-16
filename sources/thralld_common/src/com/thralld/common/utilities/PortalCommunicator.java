@@ -18,14 +18,13 @@ import com.thralld.common.objects.PortalServerInfo;
  */
 public class PortalCommunicator 
 {
-	//TODO: change this and read from properties.
-	private static final String serverListUrl = "http://machiry.org/error.php";
 	/***
 	 * This method gets the available server list from the portal.
 	 * 
+	 * @param serverListUrl Webpage containing information about servers.
 	 * @return List of PortalServerInfo objects representing each of the available server.
 	 */
-	public static List<PortalServerInfo> getServerList()
+	public static List<PortalServerInfo> getServerList(String serverListUrl)
 	{
 		ArrayList<PortalServerInfo> toRet = new ArrayList<PortalServerInfo>();
 		List<String> webpageContents = NetworkUtilities.readWebPage(serverListUrl);

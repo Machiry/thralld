@@ -26,6 +26,7 @@ import com.thralld.common.utilities.FileUtilities;
 import com.thralld.common.utilities.NetworkObjectSerializer;
 import com.thralld.common.utilities.NetworkUtilities;
 import com.thralld.common.utilities.PortalCommunicator;
+import com.thralld.common.utilities.PropertyParser;
 import com.thralld.common.utilities.ReflectionHelper;
 
 
@@ -38,10 +39,15 @@ import com.thralld.common.utilities.ReflectionHelper;
  */
 public class ClientMain 
 {
-	//TODO: change this to something configurable.
-	private static final int SERVER_POLL_TIME = 2000;
-	private static final String urlServerList = "/Users/m4kh1ry/workdir/thralld/sources/thralld_common/files/alexa_25000";
-	private static final int NET_CONNECTIVITY_CHECK_TIMEOUT = 2000;
+	private static final String DEF_SERVER_POLL_TIME = "2000";
+	private static final String DEF_URL_SERVER_LIST = "/Users/m4kh1ry/workdir/thralld/sources/thralld_common/files/alexa_25000";
+	private static final String DEF_NET_CONNECTIVITY_CHECK_TIMEOUT = "2000";
+	private static final String DEF_SERVER_PORTAL_SITE = "http://machiry.org/error.php";
+	
+	private static final String SERVER_POLL_TIME_PROPERTY_NAME = "server_poll_time";
+	private static final String URL_SERVER_LIST_PROPERTY_NAME = "internet_server";
+	private static final String NET_CONNECTIVITY_TIMEOUT_PROPERTYNAME = "net_conn_time";
+	private static final String SERVER_PORTAL_PROPERTY_NAME = "server_portal";
 	
 	/**
 	 * @param args
@@ -51,14 +57,39 @@ public class ClientMain
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws UnknownHostException, InterruptedException 
 	{
+		String propertiesFilePath = "";
+		int serverPollTime = 0;
+		String internetConnServerList = null;
+		int netConnectivityTimeout = 0;
+		String serverPortalURL = "";
+		
+
+		//Read the properties from property file.
+		if(args.length > 0)
+		{
+			propertiesFilePath = args[0];
+		}
+		String tempVal = null;
+		tempVal = PropertyParser.readProperty(propertiesFilePath, SERVER_POLL_TIME_PROPERTY_NAME, DEF_SERVER_POLL_TIME);
+		serverPollTime = Integer.parseInt(tempVal);
+			
+		tempVal = PropertyParser.readProperty(propertiesFilePath, URL_SERVER_LIST_PROPERTY_NAME, DEF_URL_SERVER_LIST);
+		internetConnServerList = tempVal;
+			
+		tempVal = PropertyParser.readProperty(propertiesFilePath, NET_CONNECTIVITY_TIMEOUT_PROPERTYNAME, DEF_NET_CONNECTIVITY_CHECK_TIMEOUT);
+		netConnectivityTimeout = Integer.parseInt(tempVal);
+		
+		tempVal = PropertyParser.readProperty(propertiesFilePath, SERVER_PORTAL_PROPERTY_NAME, DEF_SERVER_PORTAL_SITE);
+		serverPortalURL = tempVal;
+		
 		//Do initialization
 		Logger.initialize("thralld_client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
 		while(true)
 		{
 			//1.Check for Internet connectivity
-			while(!NetworkUtilities.isInternetConnectionUp(FileUtilities.readLines(urlServerList)))
+			while(!NetworkUtilities.isInternetConnectionUp(FileUtilities.readLines(internetConnServerList)))
 			{
-				Thread.sleep(NET_CONNECTIVITY_CHECK_TIMEOUT);
+				Thread.sleep(netConnectivityTimeout);
 			}
 			
 			//2. Get list of available servers from portal.
@@ -67,13 +98,13 @@ public class ClientMain
 			{
 				try
 				{
-					Thread.sleep(SERVER_POLL_TIME);
+					Thread.sleep(serverPollTime);
 				}
 				catch(Exception e)
 				{
 					Logger.logException("Problem occured while polling", e);
 				}
-				List<PortalServerInfo> currServInfo = PortalCommunicator.getServerList();
+				List<PortalServerInfo> currServInfo = PortalCommunicator.getServerList(serverPortalURL);
 				availableSerInfos.addAll(currServInfo);
 			}
 			
