@@ -45,7 +45,7 @@ public class ClientMain
 	private static final String DEF_SERVER_PORTAL_SITE = "http://machiry.org/error.php";
 	
 	private static final String SERVER_POLL_TIME_PROPERTY_NAME = "server_poll_time";
-	private static final String URL_SERVER_LIST_PROPERTY_NAME = "internet_server";
+	private static final String URL_SERVER_LIST_PROPERTY_NAME = "internet_server_list";
 	private static final String NET_CONNECTIVITY_TIMEOUT_PROPERTYNAME = "net_conn_time";
 	private static final String SERVER_PORTAL_PROPERTY_NAME = "server_portal";
 	

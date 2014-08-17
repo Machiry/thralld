@@ -50,6 +50,7 @@
 			<pathelement location="${build.dir}"/>
 			<pathelement location="${thralld_common.build.dir}"/>
 		</classpath>
+		<arg value="thralld_client.properties"/>
 	</java>
   </target>
 
@@ -61,6 +62,7 @@
 			<pathelement location="${build.dir}"/>
 			<pathelement location="${thralld_common.build.dir}"/>
 		</classpath>
+		<arg value="thralld_client.properties"/>
 	</java>
   </target>
 </project>
