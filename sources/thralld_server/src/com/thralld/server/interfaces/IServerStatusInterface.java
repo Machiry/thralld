@@ -73,5 +73,19 @@ public interface IServerStatusInterface
 	 * @return preference number of the server
 	 */
 	public abstract int getServerPreference();
+	
+	/***
+	 * This method checks whether the server main thread is running or not.
+	 * 
+	 * @return True/False depending on whether the server is running or not.
+	 */
+	public abstract boolean isServerRunning();
+	
+	/***
+	 * This method return the status of currently running server.
+	 * 
+	 * @return String representing status of the server.
+	 */
+	public abstract String getServerStatus();
 
 }

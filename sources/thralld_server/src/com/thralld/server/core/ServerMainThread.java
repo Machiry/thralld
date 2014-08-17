@@ -75,5 +75,15 @@ public class ServerMainThread extends Thread
 		retVal = this.targetNetInterface.closeConnection(this.serverConnection);
 		return retVal;
 	}
+	
+	/***
+	 * This method returns the connection representing the current server.
+	 * 
+	 * @return NetworkConnection object representing server connection.
+	 */
+	public NetworkConnection getServerNetworkConnection()
+	{
+		return this.serverConnection;
+	}
 
 }

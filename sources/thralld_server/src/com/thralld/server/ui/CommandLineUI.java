@@ -11,14 +11,18 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.logging.Logger;
+import com.thralld.common.objects.ClientInfo;
+import com.thralld.common.utilities.GenericUtilities;
 import com.thralld.server.core.ServerMain;
 import com.thralld.server.interfaces.IServerStatusInterface;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
 import com.thralld.server.ui.interfaces.IExitCommandHandler;
 import com.thralld.server.ui.interfaces.IHelpCommandHandler;
+import com.thralld.server.ui.interfaces.IServerStartCommandHandler;
 import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
 
 /**
@@ -26,7 +30,7 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  * @author m4kh1ry
  *
  */
-public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,IHelpCommandHandler,IExitCommandHandler
+public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -58,6 +62,7 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		availableCommands.put("status",commonCommandHandler);
 		availableCommands.put("clients", commonCommandHandler);
 		availableCommands.put("exit", commonCommandHandler);
+		availableCommands.put("start", commonCommandHandler);
 		
 	}
 	
@@ -236,7 +241,22 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			PrintStream outputStream,
 			IServerStatusInterface targetServerInterface) 
 	{
-		
+		List<ClientInfo> runningClients = targetServerInterface.getConnectedClients();
+		if(runningClients != null && runningClients.size() > 0)
+		{
+			outputStream.println(Integer.toString(runningClients.size()) + " clients connected.");
+			outputStream.println();
+			for(ClientInfo currCli:runningClients)
+			{
+				outputStream.println(currCli.toString());
+			}
+			outputStream.println();
+		}
+		else
+		{
+			outputStream.println("No clients connected.");
+		}
+				
 		return false;
 	}
 
@@ -255,17 +275,27 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			PrintStream outputStream,
 			IServerStatusInterface targetServerInterface) 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(targetServerInterface.isServerRunning())
+		{
+			outputStream.println("Server running.");
+			outputStream.println("Status:");
+			outputStream.println(targetServerInterface.getServerStatus());
+		}
+		else
+		{
+			outputStream.println("Server not running.");
+		}
+		return true;
 	}
 
 	@Override
 	public void displayServerStatusCommandHelpMessage(PrintStream outputStream) 
 	{
-		// TODO Auto-generated method stub
-		
+		outputStream.println("Usage: status");
+		outputStream.println("This command provides the status of server.");
 	}
 
+	//Exit command handler
 	@Override
 	public boolean handleExitCommand(String providedCommandLine,
 			PrintStream outputStream,
@@ -292,6 +322,89 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		outputStream.println("Usage: exit");
 		outputStream.println("This command terminates the current server and closes connections to clients");
 		
+	}
+
+	//ServerStart command handler
+	@Override
+	public boolean handleServerStartCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		String[] commandLineParts = GenericUtilities.splitBySpace(providedCommandLine);
+		boolean restart = false;
+		int serverPortNumber = 0;
+		int portNumberIndex = 1;
+		//Validate the arguments.
+		if(commandLineParts.length > 3 || commandLineParts.length < 2)
+		{
+			return false;
+		}
+		
+		if(commandLineParts.length > 2)
+		{
+			if(commandLineParts[1].equals("force"))
+			{
+				restart = true;
+				portNumberIndex = 2;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		if(commandLineParts.length > 1)
+		{
+			if(GenericUtilities.isInteger(commandLineParts[portNumberIndex]))
+			{
+				serverPortNumber = Integer.parseInt(commandLineParts[portNumberIndex]);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		if(targetServerInterface.isServerRunning())
+		{
+			outputStream.println("Server running.");
+			//Restart the server
+			if(restart)
+			{
+				outputStream.println("Stopping Server.");
+				if(targetServerInterface.stopServer())
+				{
+					outputStream.println("Server sucessfully stopped");
+				}
+				else
+				{
+					outputStream.println("Problem occured while stopping the server.");
+				}
+			}
+			else
+			{
+				outputStream.println("Please specify 'force' to restart server");
+				return true;
+			}
+		}
+		//Start the server
+		if(targetServerInterface.startServer(serverPortNumber))
+		{
+			outputStream.println("Server sucessfully started.");
+		}
+		else
+		{
+			outputStream.println("Problem occured while starting the server.");
+		}
+		return true;
+	}
+
+	@Override
+	public void displayServerStartCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: start <force> [portNo]");
+		outputStream.println("This command starts server main thread.");
+		outputStream.println("\tSpecify 'force' if you want to restart the server.");
+		outputStream.println("\tportNo is the port on which server thread has to listen.");
 	}
 
 }

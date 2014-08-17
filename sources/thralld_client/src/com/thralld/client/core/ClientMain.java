@@ -23,6 +23,7 @@ import com.thralld.common.tcpnetwork.TCPConnectionSpecification;
 import com.thralld.common.tcpnetwork.TCPNetworkImplementation;
 import com.thralld.common.utilities.CommandHandlerFactory;
 import com.thralld.common.utilities.FileUtilities;
+import com.thralld.common.utilities.GenericUtilities;
 import com.thralld.common.utilities.NetworkObjectSerializer;
 import com.thralld.common.utilities.NetworkUtilities;
 import com.thralld.common.utilities.PortalCommunicator;
@@ -71,12 +72,20 @@ public class ClientMain
 		}
 		String tempVal = null;
 		tempVal = PropertyParser.readProperty(propertiesFilePath, SERVER_POLL_TIME_PROPERTY_NAME, DEF_SERVER_POLL_TIME);
+		if(!GenericUtilities.isInteger(tempVal))
+		{
+			tempVal = DEF_SERVER_POLL_TIME;
+		}
 		serverPollTime = Integer.parseInt(tempVal);
 			
 		tempVal = PropertyParser.readProperty(propertiesFilePath, URL_SERVER_LIST_PROPERTY_NAME, DEF_URL_SERVER_LIST);
 		internetConnServerList = tempVal;
 			
 		tempVal = PropertyParser.readProperty(propertiesFilePath, NET_CONNECTIVITY_TIMEOUT_PROPERTYNAME, DEF_NET_CONNECTIVITY_CHECK_TIMEOUT);
+		if(!GenericUtilities.isInteger(tempVal))
+		{
+			tempVal = DEF_NET_CONNECTIVITY_CHECK_TIMEOUT;
+		}
 		netConnectivityTimeout = Integer.parseInt(tempVal);
 		
 		tempVal = PropertyParser.readProperty(propertiesFilePath, SERVER_PORTAL_PROPERTY_NAME, DEF_SERVER_PORTAL_SITE);

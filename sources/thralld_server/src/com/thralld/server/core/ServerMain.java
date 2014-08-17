@@ -181,4 +181,23 @@ public class ServerMain implements IServerStatusInterface,IServerThreadFeedback
 		
 	}
 
+	@Override
+	public boolean isServerRunning() 
+	{
+		return this.currentServerMain != null && !this.currentServerMain.isStopped;
+	}
+
+	@Override
+	public String getServerStatus() 
+	{
+		if(this.currentServerMain != null && !this.currentServerMain.isStopped)
+		{
+			return this.currentServerMain.toString();
+		}
+		else
+		{
+			return "Server not started";
+		}
+	}
+
 }
