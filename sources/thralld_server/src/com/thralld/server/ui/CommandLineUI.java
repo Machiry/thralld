@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.logging.Logger;
@@ -20,6 +21,8 @@ import com.thralld.common.utilities.GenericUtilities;
 import com.thralld.server.core.ServerMain;
 import com.thralld.server.interfaces.IServerStatusInterface;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
+import com.thralld.server.ui.interfaces.ICommandParametersCommandHandler;
+import com.thralld.server.ui.interfaces.ICommandsCommandHandler;
 import com.thralld.server.ui.interfaces.IExitCommandHandler;
 import com.thralld.server.ui.interfaces.IHelpCommandHandler;
 import com.thralld.server.ui.interfaces.IServerStartCommandHandler;
@@ -30,7 +33,9 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  * @author m4kh1ry
  *
  */
-public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler
+public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,
+IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler,ICommandsCommandHandler,
+ICommandParametersCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -63,6 +68,9 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		availableCommands.put("clients", commonCommandHandler);
 		availableCommands.put("exit", commonCommandHandler);
 		availableCommands.put("start", commonCommandHandler);
+		availableCommands.put("commands", commonCommandHandler);
+		availableCommands.put("comm_params", commonCommandHandler);
+		
 		
 	}
 	
@@ -116,6 +124,33 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			}
 			
 		}
+		if(command.equals("start"))
+		{
+			IServerStartCommandHandler cmdHandler = (IServerStartCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleServerStartCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
+		if(command.equals("commands"))
+		{
+			ICommandsCommandHandler cmdHandler = (ICommandsCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleCommandsCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
+		if(command.equals("comm_params"))
+		{
+			ICommandParametersCommandHandler cmdHandler = (ICommandParametersCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleCommandParametersCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
 		return retVal;
 	}
 
@@ -152,6 +187,33 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 			if(cmdHandler != null)
 			{
 				cmdHandler.displayExitCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("start"))
+		{
+			IServerStartCommandHandler cmdHandler = (IServerStartCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayServerStartCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("commands"))
+		{
+			ICommandsCommandHandler cmdHandler = (ICommandsCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayCommandsCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("comm_params"))
+		{
+			ICommandParametersCommandHandler cmdHandler = (ICommandParametersCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayCommandParametersCommandHelpMessage(System.out);
 			}
 			
 		}
@@ -405,6 +467,72 @@ public class CommandLineUI implements IServerStatusCommandHandler,IClientsComman
 		outputStream.println("This command starts server main thread.");
 		outputStream.println("\tSpecify 'force' if you want to restart the server.");
 		outputStream.println("\tportNo is the port on which server thread has to listen.");
+	}
+
+	//Commands command handler
+	@Override
+	public boolean handleCommandsCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		HashMap<String,String> availCommands = targetServerInterface.getAvailableCommands();
+		outputStream.println("Number of available commands:"+Integer.toString(availCommands.size()));
+		for(Map.Entry<String, String> entry:availCommands.entrySet())
+		{
+			outputStream.println("\t"+entry.getKey() +":" + entry.getValue());
+		}
+		return true;
+	}
+
+	@Override
+	public void displayCommandsCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: commands");
+		outputStream.println("This command displays the commands supported by the current server.");
+		
+	}
+
+	//comm_params command handler
+	@Override
+	public boolean handleCommandParametersCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		String[] commandParts = GenericUtilities.splitBySpace(providedCommandLine);
+		if(commandParts.length == 2)
+		{
+			List<String> params = targetServerInterface.getCommandParameters(commandParts[1]);
+			if(params == null)
+			{
+				outputStream.println("Command not supported:" + commandParts[1]);
+			}
+			else
+			{
+				if(params.size() == 0)
+				{
+					outputStream.println("Command has no parameters");
+				}
+				else
+				{
+					for(String paramName:params)
+					{
+						outputStream.println("Parameter:"+paramName);
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void displayCommandParametersCommandHelpMessage(
+			PrintStream outputStream) 
+	{
+		outputStream.println("Usage: comm_params [commandName]");
+		outputStream.println("This command displays parameters supported by the provided command.");
+		outputStream.println("\tcommandName : This target command whose parameters need to be displayed.");
+		
 	}
 
 }

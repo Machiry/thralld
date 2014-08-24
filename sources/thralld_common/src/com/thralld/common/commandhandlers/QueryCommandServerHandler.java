@@ -38,9 +38,11 @@ public class QueryCommandServerHandler extends ServerCommandHandler
 				else
 				{
 					Logger.logInfo("Starting QueryCommand processing on connection:"+targetNetworkConnection.toString());
+					//Command not available return not available response.
 					if(!isCommandAvailableAtClient(targetNetworkConnection, toProcess))
 					{
-						//Command not available on client.
+						Logger.logError("Command:" +toProcess.toString() +" not available on client:"+targetNetworkConnection.toString());
+						toRet = QueryCommandResponseInfo.getNotAvailableResponse(toProcess.transactionID);
 						break;
 					}
 					

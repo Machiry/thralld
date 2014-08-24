@@ -41,6 +41,8 @@ public class ServerThread extends Thread
 	private boolean toTerminate = false;
 	//This is the interface used to provide feedback about creation and termination of threads.
 	private IServerThreadFeedback serverMainFeedback = null;
+	//This holds the current command that is being processed.
+	private CommandRequestInfo currentCommand = null;
 	
 	public ServerThread(NetworkConnection netConn,INetworkInterface netInter,IServerThreadFeedback serverMainFeedback)
 	{
@@ -65,6 +67,42 @@ public class ServerThread extends Thread
 			}
 		}
 		return false;
+	}
+	
+	/***
+	 * This method gets the status of the command from its unique id.
+	 * 
+	 * @param uniqueID Unique id of the command to fetch the status
+	 * 
+	 * @return CommandState of the command.
+	 */
+	public CommandState getCommandState(String uniqueID)
+	{
+		if(currentCommand != null && currentCommand.transactionID.equals(uniqueID))
+		{
+			return CommandState.RUNNING;
+		}
+		synchronized (toProcessCommands) 
+		{	
+			for(CommandRequestInfo commReq:toProcessCommands)
+			{
+				if(commReq.transactionID.equals(uniqueID))
+				{
+					return CommandState.INQUEUE;
+				}
+			}
+		}
+		synchronized (commandResults) 
+		{
+			for(CommandResponseInfo comRes:commandResults)
+			{
+				if(comRes.transactionID.equals(uniqueID))
+				{
+					return CommandState.RESPONSE_READY;
+				}
+			}
+		}
+		return CommandState.UNKNOWN;
 	}
 	
 	private synchronized boolean stopSeverThreadConnection()
@@ -154,6 +192,7 @@ public class ServerThread extends Thread
 			//3. If you have a command, process it.
 			if(toProcess != null)
 			{
+				currentCommand = toProcess;
 				ServerCommandHandler commandHandler = CommandHandlerFactory.getServerCommandHandler(toProcess);
 				CommandResponseInfo resultInfo = commandHandler.processCommand(targetNetworkConnecion, toProcess);
 				if(resultInfo == null)
@@ -169,11 +208,14 @@ public class ServerThread extends Thread
 					commandResults.add(resultInfo);
 				}
 			}
+			currentCommand = null;
 			if(toTerminate)
 			{
 				break;
 			}
 		}
+		//Set the current command to null.
+		currentCommand = null;
 		//Terminate the connection
 		Logger.logInfo("Closing the connection to client thread:"+this.targetNetworkConnecion.toString());
 		//Close the connection

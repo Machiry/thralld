@@ -20,6 +20,7 @@ public abstract class CommandResponseInfo implements Serializable
 	 */
 	private static final long serialVersionUID = 313085552277730818L;
 	public String transactionID = null;
+	private boolean isNotAvailableResponse = false;
 	
 	//We should have copy constructor for this class as this is serializable
 	public CommandResponseInfo()
@@ -57,6 +58,24 @@ public abstract class CommandResponseInfo implements Serializable
 	public String toString()
 	{
 		return "ResponseInfo:" + this.transactionID;
+	}
+	
+	/***
+	 * This method sets not available flag to true.
+	 */
+	public void setNotAvailableReponse()
+	{
+		this.isNotAvailableResponse = true;
+	}
+	
+	/***
+	 * This method returns whether the response info object is represents not available response or not.
+	 * 
+	 * @return true if the object represents not available response else false.
+	 */
+	public boolean isNotAvailableResponse()
+	{
+		return this.isNotAvailableResponse;
 	}
 
 }

@@ -29,10 +29,11 @@ public abstract class ServerCommandHandler
 	public abstract CommandResponseInfo processCommand(NetworkConnection targetNetworkConnection,CommandRequestInfo toProcess);
 	
 	/***
+	 * This method checks whether a given command is available at the client.
 	 * 
-	 * @param targetNetworkConnection
-	 * @param toProcess
-	 * @return
+	 * @param targetNetworkConnection Network connection of the client
+	 * @param toProcess The target command that needs to be checked.
+	 * @return true/false depending on whether command is available at client.
 	 */
 	protected boolean isCommandAvailableAtClient(NetworkConnection targetNetworkConnection,CommandRequestInfo toProcess)
 	{

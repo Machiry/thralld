@@ -36,4 +36,17 @@ public class QueryCommandResponseInfo extends CommandResponseInfo
 		retVal = retVal && (this.commandVersions.size() == this.noOfAvailableCommands);
 		return retVal;
 	}
+	
+	/***
+	 * This method returns not available response object.
+	 * @param uniqueID target unique id of the object to be returned.
+	 * @return QueryCommandResponseInfo object representing not available reponse.
+	 */
+	public static QueryCommandResponseInfo getNotAvailableResponse(String uniqueID)
+	{
+		QueryCommandResponseInfo toRet = new QueryCommandResponseInfo();
+		toRet.transactionID = uniqueID;
+		toRet.setNotAvailableReponse();
+		return toRet;
+	}
 }
