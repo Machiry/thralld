@@ -1,6 +1,7 @@
 package com.thralld.server.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.CommandRequestInfo;
@@ -27,8 +28,8 @@ public class ServerThread extends Thread
 {
 	//List containing the commands that need to be processed.
 	private ArrayList<CommandRequestInfo> toProcessCommands = new ArrayList<CommandRequestInfo>();
-	//List containing responses for each of the command
-	private ArrayList<CommandResponseInfo> commandResults = new ArrayList<CommandResponseInfo>();
+	//HashMap containing responses for each of the command
+	private HashMap<CommandRequestInfo,CommandResponseInfo> commandResults = new HashMap<CommandRequestInfo,CommandResponseInfo>();
 	//The Network connection on which the communication needs to be take place.
 	private NetworkConnection targetNetworkConnecion = null;
 	//The target network interface to use while working with network.
@@ -70,6 +71,36 @@ public class ServerThread extends Thread
 	}
 	
 	/***
+	 * This method returns the state of commands currently know to this server thread processing client.
+	 * 
+	 * @return HashMap containing requestInfo and corresponding state.
+	 */
+	public HashMap<CommandRequestInfo,CommandState> getCommandsState()
+	{
+		HashMap<CommandRequestInfo,CommandState> toRet = new HashMap<CommandRequestInfo,CommandState>();
+		if(currentCommand != null)
+		{
+			toRet.put(currentCommand, CommandState.RUNNING);
+		}
+		synchronized (toProcessCommands) 
+		{
+			for(CommandRequestInfo cReq:toProcessCommands)
+			{
+				toRet.put(cReq,CommandState.INQUEUE);
+			}
+			
+		}
+		synchronized (commandResults) 
+		{
+			for(CommandRequestInfo cReq:commandResults.keySet())
+			{
+				toRet.put(cReq, CommandState.RESPONSE_READY);
+			}
+		}
+		return toRet;
+	}
+	
+	/***
 	 * This method gets the status of the command from its unique id.
 	 * 
 	 * @param uniqueID Unique id of the command to fetch the status
@@ -94,7 +125,7 @@ public class ServerThread extends Thread
 		}
 		synchronized (commandResults) 
 		{
-			for(CommandResponseInfo comRes:commandResults)
+			for(CommandResponseInfo comRes:commandResults.values())
 			{
 				if(comRes.transactionID.equals(uniqueID))
 				{
@@ -126,7 +157,7 @@ public class ServerThread extends Thread
 		CommandResponseInfo toRet = null;
 		synchronized (commandResults) 
 		{
-			for(CommandResponseInfo resp:commandResults)
+			for(CommandResponseInfo resp:commandResults.values())
 			{
 				if(resp.transactionID.equals(uniqueID))
 				{
@@ -205,7 +236,7 @@ public class ServerThread extends Thread
 				}
 				synchronized (commandResults) 
 				{
-					commandResults.add(resultInfo);
+					commandResults.put(toProcess,resultInfo);
 				}
 			}
 			currentCommand = null;
