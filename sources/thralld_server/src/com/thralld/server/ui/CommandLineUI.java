@@ -20,6 +20,7 @@ import com.thralld.common.objects.ClientInfo;
 import com.thralld.common.utilities.GenericUtilities;
 import com.thralld.server.core.ServerMain;
 import com.thralld.server.interfaces.IServerStatusInterface;
+import com.thralld.server.ui.interfaces.IClientCommandHandler;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
 import com.thralld.server.ui.interfaces.ICommandParametersCommandHandler;
 import com.thralld.server.ui.interfaces.ICommandsCommandHandler;
@@ -35,7 +36,7 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  */
 public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,
 IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler,ICommandsCommandHandler,
-ICommandParametersCommandHandler
+ICommandParametersCommandHandler,IClientCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -70,7 +71,7 @@ ICommandParametersCommandHandler
 		availableCommands.put("start", commonCommandHandler);
 		availableCommands.put("commands", commonCommandHandler);
 		availableCommands.put("comm_params", commonCommandHandler);
-		
+		availableCommands.put("client", commonCommandHandler);
 		
 	}
 	
@@ -151,6 +152,15 @@ ICommandParametersCommandHandler
 			}
 			
 		}
+		if(command.equals("client"))
+		{
+			IClientCommandHandler cmdHandler = (IClientCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleClientCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
 		return retVal;
 	}
 
@@ -214,6 +224,15 @@ ICommandParametersCommandHandler
 			if(cmdHandler != null)
 			{
 				cmdHandler.displayCommandParametersCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("client"))
+		{
+			IClientCommandHandler cmdHandler = (IClientCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayClientCommandHelpMessage(System.out);
 			}
 			
 		}
@@ -532,6 +551,65 @@ ICommandParametersCommandHandler
 		outputStream.println("Usage: comm_params [commandName]");
 		outputStream.println("This command displays parameters supported by the provided command.");
 		outputStream.println("\tcommandName : This target command whose parameters need to be displayed.");
+		
+	}
+
+	//client command handler
+	@Override
+	public boolean handleClientCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		String[] commandParts = GenericUtilities.splitBySpace(providedCommandLine);
+		if(commandParts.length < 3)
+		{
+			return false;
+		}
+		List<ClientInfo> childConnections = targetServerInterface.getClientInfoByName(commandParts[1]);
+		if(childConnections == null || childConnections.size() == 0)
+		{
+			return false;
+		}
+		String subCommand = commandParts[2];
+		if("status".equals(subCommand))
+		{
+			if(commandParts.length == 4)
+			{
+				//Get status of provided command
+			}
+			else
+			{
+				//Get status of all commands
+			}
+			return true;
+		}
+		else if("run".equals(subCommand) && commandParts.length >= 4)
+		{
+			//Run the provided command.
+		}
+		else if("get_resp".equals(subCommand) && commandParts.length == 4)
+		{
+			String targetUniqueId = commandParts[3];
+			//Get the response of the provided command id
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void displayClientCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: client [clientName] [status|run|get_resp] [command_unique_id|command_parameters]");
+		outputStream.println("This command performs requested opreation on the provided client.");
+		outputStream.println("\tclientName : Name of the client on which requested operation to be performed.");
+		outputStream.println("\tstatus : This sub-command gets the status of the requested command or commands.");
+		outputStream.println("\trun : This sub-command runs the provided command on the provided client.");
+		outputStream.println("\tget_resp : This sub-command gets the response of the command provided by unique id.");
+		outputStream.println("\tcommand_unique_id : Unique ID of the target command.");
+		outputStream.println("\tcommand_parameters : Command parameters of the command that need to be run.");
 		
 	}
 
