@@ -58,5 +58,29 @@ public class GenericUtilities
 	{
 		return originalString.split("\\s+");
 	}
+	
+	/***
+	 * Split the provided string by space, and limits the parts to provided limit and return the parts.
+	 * @param originalString The string to be split.
+	 * @param maximumParts Maximum number of string parts to be returned.
+	 * 
+	 * @return Parts of the splitted string.
+	 */
+	public static String[] splitBySpace(String originalString,int maximumParts)
+	{
+		return originalString.split("\\s+",maximumParts);
+	}
+	
+	/***
+	 * Split the provided string by the provided character and return the parts.
+	 * @param originalString The string to be split.
+	 * @param splitChar The character w.r.t which the string needs to be split.
+	 * 
+	 * @return Parts of the splitted string.
+	 */
+	public static String[] splitByChar(String originalString,String splitChar)
+	{
+		return originalString.split(splitChar);
+	}
 
 }

@@ -6,14 +6,17 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.aobjects.CommandResponseInfo;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
 import com.thralld.common.objects.PortalServerInfo;
 import com.thralld.common.utilities.PortalCommunicator;
 import com.thralld.common.utilities.ReflectionHelper;
+import com.thralld.server.interfaces.CommandState;
 import com.thralld.server.interfaces.IServerStatusInterface;
 import com.thralld.server.interfaces.IServerThreadFeedback;
 
@@ -198,6 +201,68 @@ public class ServerMain implements IServerStatusInterface,IServerThreadFeedback
 		{
 			return "Server not started";
 		}
+	}
+
+	@Override
+	public boolean scheduleClientCommand(ClientInfo targetClient,
+			CommandRequestInfo toRunCommand) 
+	{
+		synchronized (currentProcessingThreads) 
+		{
+			if(currentProcessingThreads.containsKey(targetClient))
+			{
+				return currentProcessingThreads.get(targetClient).addCommand(toRunCommand);
+			}
+			
+		}
+		return false;
+	}
+
+	@Override
+	public CommandState getCommandState(ClientInfo targetClient, String uniqueID) 
+	{
+		CommandState toRet = CommandState.UNKNOWN;
+		synchronized (currentProcessingThreads) 
+		{
+			if(currentProcessingThreads.containsKey(targetClient))
+			{
+				toRet = currentProcessingThreads.get(targetClient).getCommandState(uniqueID);
+			}
+			
+		}
+		return toRet;
+	}
+
+	@Override
+	public Map<CommandRequestInfo, CommandState> getCurrentCommandsState(
+			ClientInfo targetClient) 
+	{
+		Map<CommandRequestInfo,CommandState> toRet = new HashMap<CommandRequestInfo, CommandState>();
+		synchronized (currentProcessingThreads) 
+		{
+			if(currentProcessingThreads.containsKey(targetClient))
+			{
+				toRet = currentProcessingThreads.get(targetClient).getCommandsState();
+			}
+			
+		}
+		return toRet;
+	}
+
+	@Override
+	public CommandResponseInfo getCommandResponse(ClientInfo targetClient,
+			String uniqueID) 
+	{
+		CommandResponseInfo toRet = null;
+		synchronized (currentProcessingThreads) 
+		{
+			if(currentProcessingThreads.containsKey(targetClient))
+			{
+				toRet = currentProcessingThreads.get(targetClient).getResponse(uniqueID);
+			}
+			
+		}
+		return toRet;
 	}
 
 }

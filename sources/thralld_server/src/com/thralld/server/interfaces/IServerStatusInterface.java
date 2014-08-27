@@ -6,7 +6,11 @@ package com.thralld.server.interfaces;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.thralld.common.annotations.CanReturnNull;
+import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.aobjects.CommandResponseInfo;
 import com.thralld.common.objects.ClientInfo;
 
 /**
@@ -87,5 +91,42 @@ public interface IServerStatusInterface
 	 * @return String representing status of the server.
 	 */
 	public abstract String getServerStatus();
+	
+	/***
+	 * This method inserts the provided command request info object into the given client queue.
+	 * 
+	 * @param targetClient The target client into which the command need to be queued.
+	 * @param toRunCommand The target command to run.
+	 * 
+	 * @return True/False depending on whether the scheduling is successful or not.
+	 */
+	public abstract boolean scheduleClientCommand(ClientInfo targetClient,CommandRequestInfo toRunCommand);
+	
+	/***
+	 * This method gets the state of the provided command on the given client.
+	 * 
+	 * @param targetClient The client on which status of the command need to be queried.
+	 * @param uniqueID Unique id of the command that needs to be queried.
+	 * @return CommandState representing state of the command.
+	 */
+	public abstract CommandState getCommandState(ClientInfo targetClient,String uniqueID);
+	
+	/***
+	 * This method gets the state of all the commands known to the provided client.
+	 * 
+	 * @param targetClient The client whose status needs to be queried.
+	 * @return Map of CommandRequestInfo and corresponding CommandState objects.
+	 */
+	public abstract Map<CommandRequestInfo,CommandState> getCurrentCommandsState(ClientInfo targetClient);
+	
+	/***
+	 * This method gets the CommandResponseInfo object of the command from the provided client.
+	 * 
+	 * @param targetClient The client from which response needs to be fetched.
+	 * @param uniqueID The unique id of the command whose response needs to be fetched.
+	 * @return CommandResponseInfo of the target command.
+	 */
+	@CanReturnNull
+	public abstract CommandResponseInfo getCommandResponse(ClientInfo targetClient,String uniqueID);
 
 }

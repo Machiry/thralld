@@ -15,10 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.thralld.common.annotations.CanReturnNull;
+import com.thralld.common.aobjects.Command;
+import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.aobjects.CommandResponseInfo;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
 import com.thralld.common.utilities.GenericUtilities;
+import com.thralld.common.utilities.ReflectionHelper;
 import com.thralld.server.core.ServerMain;
+import com.thralld.server.interfaces.CommandState;
 import com.thralld.server.interfaces.IServerStatusInterface;
 import com.thralld.server.ui.interfaces.IClientCommandHandler;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
@@ -560,49 +565,107 @@ ICommandParametersCommandHandler,IClientCommandHandler
 			PrintStream outputStream,
 			IServerStatusInterface targetServerInterface) 
 	{
-		String[] commandParts = GenericUtilities.splitBySpace(providedCommandLine);
-		if(commandParts.length < 3)
+		String[] commandParts = GenericUtilities.splitBySpace(providedCommandLine,4);
+		boolean retVal = false;
+		do
 		{
-			return false;
-		}
-		List<ClientInfo> childConnections = targetServerInterface.getClientInfoByName(commandParts[1]);
-		if(childConnections == null || childConnections.size() == 0)
-		{
-			return false;
-		}
-		String subCommand = commandParts[2];
-		if("status".equals(subCommand))
-		{
-			if(commandParts.length == 4)
+			if(commandParts.length < 3)
 			{
-				//Get status of provided command
+				break;
 			}
-			else
+			List<ClientInfo> childConnections = targetServerInterface.getClientInfoByName(commandParts[1]);
+			if(childConnections == null || childConnections.size() == 0)
 			{
-				//Get status of all commands
+				outputStream.println("No client available with specified name:"+commandParts[1]);
+				break;
 			}
-			return true;
-		}
-		else if("run".equals(subCommand) && commandParts.length >= 4)
-		{
-			//Run the provided command.
-		}
-		else if("get_resp".equals(subCommand) && commandParts.length == 4)
-		{
-			String targetUniqueId = commandParts[3];
-			//Get the response of the provided command id
-		}
-		else
-		{
-			return false;
-		}
-		return true;
+			String subCommand = commandParts[2];
+			if("status".equals(subCommand))
+			{
+				if(commandParts.length == 4)
+				{
+					//Get status of provided command
+					for(ClientInfo cli:childConnections)
+					{
+						outputStream.println("For client:" + cli.toString());
+						outputStream.println("Command:"+commandParts[3] +" status:"+targetServerInterface.getCommandState(cli, commandParts[3]));
+						outputStream.println();
+					}
+				}
+				else
+				{
+					for(ClientInfo cli:childConnections)
+					{
+						outputStream.println("For client:" + cli.toString());
+						for(Map.Entry<CommandRequestInfo, CommandState> e:targetServerInterface.getCurrentCommandsState(cli).entrySet())
+						{
+							outputStream.println("Command:"+e.getKey().toString() +" status:"+e.getValue().toString());
+						}
+						outputStream.println();
+					}
+				}
+				retVal = true;
+			}
+			else if("run".equals(subCommand) && commandParts.length == 4)
+			{
+				//Run the provided command.
+				String[] subCommandParts = GenericUtilities.splitByChar(commandParts[3], Command.paramSplit);
+				Command targetCommand = ReflectionHelper.getCommandByName(subCommandParts[0]);
+				if(targetCommand == null)
+				{
+					if(GenericUtilities.isInteger(subCommandParts[1]))
+					{
+						targetCommand = ReflectionHelper.getCommandByID(Integer.parseInt(subCommandParts[1]));
+					}
+					if(targetCommand == null)
+					{
+						outputStream.println("Unable to find command of the provided id or name:"+subCommandParts[1]);
+						break;
+					}
+				}
+				Map<String,String> commParams = Command.splitCommandParams(commandParts[3]);
+				CommandRequestInfo targetRequestInfo = ReflectionHelper.getCommandRequestInfo(targetCommand);
+				targetRequestInfo.setParameters(commParams);
+				for(ClientInfo targetCli:childConnections)
+				{
+					retVal = targetServerInterface.scheduleClientCommand(targetCli, targetRequestInfo) || retVal;
+					if(retVal)
+					{
+						outputStream.println("Succesfully scheduled command on client:"+targetCli.toString());
+					}
+					else
+					{
+						outputStream.println("Error occured while scheduling command on client:"+targetCli.toString());
+					}
+				}
+				
+			}
+			else if("get_resp".equals(subCommand) && commandParts.length == 4)
+			{
+				String targetUniqueId = commandParts[3];
+				//Get the response of the provided command id
+				for(ClientInfo targetCli:childConnections)
+				{
+					outputStream.println("For client:" + targetCli.toString());
+					CommandResponseInfo resp = targetServerInterface.getCommandResponse(targetCli, targetUniqueId);
+					if(resp != null)
+					{
+						outputStream.println(resp.toString());
+					}
+					else
+					{
+						outputStream.println("Response not available for the provided command");
+					}
+				}
+			}
+		} while(false);
+		return retVal;
 	}
 
 	@Override
 	public void displayClientCommandHelpMessage(PrintStream outputStream) 
 	{
-		outputStream.println("Usage: client [clientName] [status|run|get_resp] [command_unique_id|command_parameters]");
+		outputStream.println("Usage: client [clientName] [status|run|get_resp] [command_scheduled_id|command_parameters]");
 		outputStream.println("This command performs requested opreation on the provided client.");
 		outputStream.println("\tclientName : Name of the client on which requested operation to be performed.");
 		outputStream.println("\tstatus : This sub-command gets the status of the requested command or commands.");
@@ -610,6 +673,7 @@ ICommandParametersCommandHandler,IClientCommandHandler
 		outputStream.println("\tget_resp : This sub-command gets the response of the command provided by unique id.");
 		outputStream.println("\tcommand_unique_id : Unique ID of the target command.");
 		outputStream.println("\tcommand_parameters : Command parameters of the command that need to be run.");
+		outputStream.println("\t parameters must be specified as <commandName|commandid>;<key1>=<value1>[;<key2>=<value2>..] etc");
 		
 	}
 

@@ -11,6 +11,7 @@ import com.thralld.common.aobjects.ServerCommandHandler;
 import com.thralld.common.interfaces.INetworkInterface;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.utilities.CommandHandlerFactory;
+import com.thralld.server.interfaces.CommandState;
 import com.thralld.server.interfaces.IServerThreadFeedback;
 
 /***

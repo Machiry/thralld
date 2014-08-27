@@ -31,7 +31,7 @@ public class QueryCommandRequestInfo extends CommandRequestInfo
 	}
 
 	@Override
-	public boolean setParameters(Map<String, Object> toSetParam) 
+	public boolean setParameters(Map<String, String> toSetParam) 
 	{
 		// TODO Auto-generated method stub
 		return true;

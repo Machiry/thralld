@@ -6,10 +6,12 @@ package com.thralld.common.utilities;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.annotations.ThralldCommandVersion;
 import com.thralld.common.aobjects.Command;
+import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.commands.QueryCommand;
 import com.thralld.common.logging.Logger;
 
@@ -106,5 +108,29 @@ public class ReflectionHelper
 			}
 		}
 		return "N/A";
+	}
+	
+	/***
+	 * This method returns CommandRequestInfo object of the provided command.
+	 * 
+	 * @param targetCommand The command whose request info object needs to be created.
+	 * @return Created command request info object.
+	 */
+	public static CommandRequestInfo getCommandRequestInfo(Command targetCommand)
+	{
+		CommandRequestInfo toRet = null;
+		if(targetCommand != null)
+		{
+			try
+			{
+				toRet = (CommandRequestInfo)targetCommand.getCommandRequestInfoType().newInstance();
+				toRet.transactionID = UUID.randomUUID().toString();
+			}
+			catch(Exception e)
+			{
+				Logger.logException("Problem occured while trying to create requestinfo object for command:" + targetCommand.toString(), e);
+			}
+		}
+		return toRet;
 	}
 }

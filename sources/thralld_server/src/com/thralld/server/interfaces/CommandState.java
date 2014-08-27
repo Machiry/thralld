@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.thralld.server.core;
+package com.thralld.server.interfaces;
 
 /**
  * This enum represents state of the command.

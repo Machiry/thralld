@@ -52,11 +52,12 @@ public abstract class CommandRequestInfo implements Serializable
 	 * @param toSetParam Map containing values of all the required parameters.
 	 * @return true if all the required parameters are set else false
 	 */
-	public abstract boolean setParameters(Map<String,Object> toSetParam);
+	public abstract boolean setParameters(Map<String,String> toSetParam);
 	
 	/***
+	 * This method gets the Command object of the corresponding object.
 	 * 
-	 * @return
+	 * @return The corresponding command object of the request info object.
 	 */
 	public abstract Command getTargetCommand();
 	

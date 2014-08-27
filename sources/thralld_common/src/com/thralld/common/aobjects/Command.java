@@ -3,6 +3,9 @@
  */
 package com.thralld.common.aobjects;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents generic command and any specific command should inherit this class.
  * @author m4kh1ry
@@ -13,6 +16,9 @@ package com.thralld.common.aobjects;
 @SuppressWarnings("rawtypes")
 public abstract class Command 
 {
+	public static final String paramSplit = ";";
+	public static final String valueSplit = "=";
+	
 	/***
 	 * This method returns the command id of the command
 	 * 
@@ -43,5 +49,30 @@ public abstract class Command
 	 * @return Class representing response_info structure used by the command.
 	 */
 	public abstract Class getCommandResponseInfoType();
+	
+	/***
+	 * This method split the provided string into key value map of the command parameters.
+	 * 
+	 * @param originalString The string that needs to be split.
+	 * 
+	 * @return Map of key value pairs of the parameters.
+	 */
+	public static Map<String,String> splitCommandParams(String originalString)
+	{
+		HashMap<String,String> toRet = new HashMap<String, String>();
+		String[] commParts = originalString.split(Command.paramSplit);
+		if(commParts != null)
+		{
+			for(String comm:commParts)
+			{
+				String[] paramParts = comm.split(Command.valueSplit);
+				if(paramParts != null && paramParts.length == 2)
+				{
+					toRet.put(paramParts[0],paramParts[1]);
+				}
+			}
+		}
+		return toRet;
+	}
 	
 }
