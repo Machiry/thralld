@@ -343,7 +343,7 @@ ICommandParametersCommandHandler,IClientCommandHandler
 			outputStream.println("No clients connected.");
 		}
 				
-		return false;
+		return true;
 	}
 
 	@Override

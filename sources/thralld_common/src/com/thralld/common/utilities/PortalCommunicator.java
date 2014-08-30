@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.PortalServerInfo;
 
 /**
@@ -88,6 +89,7 @@ public class PortalCommunicator
 		 * 
 		 * Need to think through.
 		 */
+		Logger.logInfo("Please update the portal which is read by client manually:"+ toPost.toString());
 		return toRet;
 	}
 

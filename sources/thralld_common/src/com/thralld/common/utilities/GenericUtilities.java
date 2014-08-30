@@ -3,6 +3,8 @@
  */
 package com.thralld.common.utilities;
 
+import java.util.Map;
+
 /**
  * This class contains generic utility functions required by our project
  * @author m4kh1ry
@@ -81,6 +83,14 @@ public class GenericUtilities
 	public static String[] splitByChar(String originalString,String splitChar)
 	{
 		return originalString.split(splitChar);
+	}
+	
+	public static void insertIntoMap(Map<String,Object> srcMap,String key,Object value)
+	{
+		if(srcMap != null && key != null && value != null)
+		{
+			srcMap.put(key, value);
+		}
 	}
 
 }
