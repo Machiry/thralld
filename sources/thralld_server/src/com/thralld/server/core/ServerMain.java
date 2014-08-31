@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
@@ -263,6 +264,18 @@ public class ServerMain implements IServerStatusInterface,IServerThreadFeedback
 			
 		}
 		return toRet;
+	}
+
+	@Override
+	public void setVerboseLogLevel() 
+	{
+		Logger.setLogLevel(Level.ALL);
+	}
+
+	@Override
+	public void setNormalLogLevel() 
+	{
+		Logger.setLogLevel(Level.SEVERE);
 	}
 
 }

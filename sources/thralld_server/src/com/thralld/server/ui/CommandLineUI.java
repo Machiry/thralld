@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.Command;
@@ -31,6 +32,7 @@ import com.thralld.server.ui.interfaces.ICommandParametersCommandHandler;
 import com.thralld.server.ui.interfaces.ICommandsCommandHandler;
 import com.thralld.server.ui.interfaces.IExitCommandHandler;
 import com.thralld.server.ui.interfaces.IHelpCommandHandler;
+import com.thralld.server.ui.interfaces.ILogLevelCommandHandler;
 import com.thralld.server.ui.interfaces.IServerStartCommandHandler;
 import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
 
@@ -41,7 +43,7 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  */
 public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,
 IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler,ICommandsCommandHandler,
-ICommandParametersCommandHandler,IClientCommandHandler
+ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -77,6 +79,7 @@ ICommandParametersCommandHandler,IClientCommandHandler
 		availableCommands.put("commands", commonCommandHandler);
 		availableCommands.put("comm_params", commonCommandHandler);
 		availableCommands.put("client", commonCommandHandler);
+		availableCommands.put("loglevel", commonCommandHandler);
 		
 	}
 	
@@ -166,6 +169,15 @@ ICommandParametersCommandHandler,IClientCommandHandler
 			}
 			
 		}
+		if(command.equals("loglevel"))
+		{
+			ILogLevelCommandHandler cmdHandler = (ILogLevelCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleLogLevelCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
 		return retVal;
 	}
 
@@ -241,6 +253,16 @@ ICommandParametersCommandHandler,IClientCommandHandler
 			}
 			
 		}
+		
+		if(command.equals("loglevel"))
+		{
+			ILogLevelCommandHandler cmdHandler = (ILogLevelCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayLogLevelCommandHelpMessage(System.out);
+			}
+			
+		}
 	}
 	
 	
@@ -251,7 +273,7 @@ ICommandParametersCommandHandler,IClientCommandHandler
 	public static void main(String[] args) throws UnknownHostException 
 	{
 		//Initialize Logger
-		Logger.initialize("thralld_server started at:"+(new Date()).toString());
+		Logger.initialize("thralld_server started at:"+(new Date()).toString(),Level.SEVERE);
 		
 		System.out.println("thralld_server started at:"+(new Date()).toString());
 		
@@ -675,6 +697,40 @@ ICommandParametersCommandHandler,IClientCommandHandler
 		outputStream.println("\tcommand_parameters : Command parameters of the command that need to be run.");
 		outputStream.println("\t parameters must be specified as <commandName|commandid>;<key1>=<value1>[;<key2>=<value2>..] etc");
 		
+	}
+
+	//loglevel command handler
+	@Override
+	public boolean handleLogLevelCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		boolean retVal = false;
+		String[] commParts = GenericUtilities.splitBySpace(providedCommandLine);
+		if(commParts != null && commParts.length == 2)
+		{
+			String toSetLev = commParts[1];
+			if(toSetLev.equals("v") || toSetLev.equals("verbose"))
+			{
+				targetServerInterface.setVerboseLogLevel();
+				retVal = true;
+			}
+			else if(toSetLev.equals("n") || toSetLev.equals("normal"))
+			{
+				targetServerInterface.setNormalLogLevel();
+				retVal = true;
+			}
+		}
+		return retVal;
+	}
+
+	@Override
+	public void displayLogLevelCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: loglevel [v[erbose]|n[ormal]]");
+		outputStream.println("This command sets the log level of the server.");
+		outputStream.println("\tv[erbose] : Set log level to verbose (all log entries will be displayed).");
+		outputStream.println("\tn[ormal] : Set log level to normal (only severe log entries will be displayed).");
 	}
 
 }

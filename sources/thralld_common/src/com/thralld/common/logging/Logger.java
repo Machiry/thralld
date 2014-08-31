@@ -21,12 +21,26 @@ public class Logger
 	 * This method initializes the logger with the provided logger name
 	 * @param loggerName the name of the logger to use.
 	 */
-	public static synchronized void initialize(String loggerName)
+	public static synchronized void initialize(String loggerName,Level targetLevel)
 	{
 		if(!isInitialized && loggerName != null)
 		{
 			targetLogger = java.util.logging.Logger.getLogger(loggerName);
+			targetLogger.setLevel(targetLevel);
 			logInfo("Logger initialized");
+		}
+	}
+	
+	/***
+	 * This method sets the log level of the logger.
+	 * 
+	 * @param targetLevel New level of the logger.
+	 */
+	public static synchronized void setLogLevel(Level targetLevel)
+	{
+		if(targetLogger != null)
+		{
+			targetLogger.setLevel(targetLevel);
 		}
 	}
 	

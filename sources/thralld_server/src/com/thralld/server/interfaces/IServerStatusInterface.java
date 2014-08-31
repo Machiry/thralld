@@ -128,5 +128,17 @@ public interface IServerStatusInterface
 	 */
 	@CanReturnNull
 	public abstract CommandResponseInfo getCommandResponse(ClientInfo targetClient,String uniqueID);
+	
+	/***
+	 * This method sets the log level of the logger to verbose.
+	 * 
+	 */
+	public abstract void setVerboseLogLevel();
+	
+	/***
+	 * This method sets the log level of the logger to normal.
+	 * 
+	 */
+	public abstract void setNormalLogLevel();
 
 }
