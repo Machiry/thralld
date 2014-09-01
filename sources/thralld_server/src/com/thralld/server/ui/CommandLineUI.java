@@ -635,13 +635,13 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 				Command targetCommand = ReflectionHelper.getCommandByName(subCommandParts[0]);
 				if(targetCommand == null)
 				{
-					if(GenericUtilities.isInteger(subCommandParts[1]))
+					if(GenericUtilities.isInteger(subCommandParts[0]))
 					{
-						targetCommand = ReflectionHelper.getCommandByID(Integer.parseInt(subCommandParts[1]));
+						targetCommand = ReflectionHelper.getCommandByID(Integer.parseInt(subCommandParts[0]));
 					}
 					if(targetCommand == null)
 					{
-						outputStream.println("Unable to find command of the provided id or name:"+subCommandParts[1]);
+						outputStream.println("Unable to find command of the provided id or name:"+subCommandParts[0]);
 						break;
 					}
 				}
@@ -679,6 +679,7 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 						outputStream.println("Response not available for the provided command");
 					}
 				}
+				retVal = true;
 			}
 		} while(false);
 		return retVal;
