@@ -118,7 +118,7 @@ public class ServerMain implements IServerStatusInterface,IServerThreadFeedback
 			try
 			{
 				Command currComm = (Command)comm.newInstance();
-				toRet.put(currComm.getCommandName(), ReflectionHelper.getCommandVersion(currComm));
+				toRet.put(currComm.toString(), ReflectionHelper.getCommandVersion(currComm));
 			}
 			catch(Exception e)
 			{

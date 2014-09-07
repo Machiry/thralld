@@ -49,4 +49,24 @@ public class QueryCommandResponseInfo extends CommandResponseInfo
 		toRet.setNotAvailableReponse();
 		return toRet;
 	}
+	
+	@Override
+	public String toString()
+	{
+		String retVal = "";
+		retVal = "UniqueID:" + this.transactionID + "\n";
+		if(this.isValid())
+		{
+			retVal += "\tNo of available commands:" + Integer.toString(this.noOfAvailableCommands) + "\n";
+			for(int i=0;i<this.noOfAvailableCommands;i++)
+			{
+				retVal += "\t\t" + this.commandNames.get(i) + "(ID:" + Integer.toString(this.commandIds.get(i)) + "): Version=" + this.commandVersions.get(i) + "\n";
+			}
+		}
+		else
+		{
+			retVal += "\tInvalid Response";
+		}
+		return retVal;
+	}
 }

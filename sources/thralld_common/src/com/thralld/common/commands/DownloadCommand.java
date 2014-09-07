@@ -3,29 +3,27 @@
  */
 package com.thralld.common.commands;
 
-import com.thralld.common.annotations.ThralldCommandVersion;
 import com.thralld.common.aobjects.Command;
 
 /**
  * This is implementation of QueryCommand,
  * Refer: https://docs.google.com/document/d/16YvvUXawvcwjnN2xpwCf30zaxRJgaqQaTfFRnSRDkiw for more details.
- * 
  * @author m4kh1ry
  *
  */
-@ThralldCommandVersion("1.0")
-public class QueryCommand extends Command 
+public class DownloadCommand extends Command 
 {
+
 	private static final int COMMAND_ID=4;
 	private static final String COMMAND_NAME="QueryCommand";
-
+	
 	/* (non-Javadoc)
 	 * @see com.thralld.common.aobjects.Command#getCommandID()
 	 */
 	@Override
 	public int getCommandID() 
 	{
-		return COMMAND_ID;
+		return DownloadCommand.COMMAND_ID;
 	}
 
 	/* (non-Javadoc)
@@ -34,34 +32,34 @@ public class QueryCommand extends Command
 	@Override
 	public String getCommandName() 
 	{
-		return COMMAND_NAME;
+		return DownloadCommand.COMMAND_NAME;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.thralld.common.aobjects.Command#getCommandRequestInfoType()
 	 */
 	@Override
-	public Class<QueryCommandRequestInfo> getCommandRequestInfoType() 
+	public Class<DownloadCommandRequestInfo> getCommandRequestInfoType() 
 	{
-		return QueryCommandRequestInfo.class;
+		return DownloadCommandRequestInfo.class;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.thralld.common.aobjects.Command#getCommandScheduleInfoType()
 	 */
 	@Override
-	public Class<QueryCommandScheduleInfo> getCommandScheduleInfoType() 
+	public Class<DownloadCommandScheduleInfo> getCommandScheduleInfoType() 
 	{
-		return QueryCommandScheduleInfo.class;
+		return DownloadCommandScheduleInfo.class;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.thralld.common.aobjects.Command#getCommandResponseInfoType()
 	 */
 	@Override
-	public Class<QueryCommandResponseInfo> getCommandResponseInfoType() 
+	public Class<DownloadCommandResponseInfo> getCommandResponseInfoType() 
 	{
-		return QueryCommandResponseInfo.class;
+		return DownloadCommandResponseInfo.class;
 	}
 
 }

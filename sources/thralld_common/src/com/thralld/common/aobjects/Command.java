@@ -75,4 +75,12 @@ public abstract class Command
 		return toRet;
 	}
 	
+	@Override
+	public String toString()
+	{
+		String toRet = "";
+		toRet = getCommandName() + " (ID:" + Integer.toString(getCommandID()) + ")";
+		return toRet;
+	}
+	
 }
