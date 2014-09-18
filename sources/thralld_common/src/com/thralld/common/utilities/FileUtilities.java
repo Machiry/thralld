@@ -99,9 +99,10 @@ public class FileUtilities
 	}
 	
 	/***
+	 * This method returns the absolute path of the provided file path.
 	 * 
-	 * @param fileRelPath
-	 * @return
+	 * @param fileRelPath Source path of the file
+	 * @return Absolute path of the provided file.
 	 */
 	public static String getFileFullPath(String fileRelPath)
 	{
@@ -114,6 +115,12 @@ public class FileUtilities
 		return toRet;
 	}
 	
+	/***
+	 * This method reads the provided file and returns its contents in byte array.
+	 * 
+	 * @param filePath Path of the file to be read
+	 * @return byte array containing file contents
+	 */
 	public static byte[] getFileContents(String filePath)
 	{
 		byte[] toRet = {};
@@ -130,6 +137,14 @@ public class FileUtilities
 		return toRet;
 	}
 	
+	/***
+	 * 
+	 * This method read the provided file and returns the contents whose maximum size is decidec by the caller.
+	 * 
+	 * @param filePath The path of the file to be read.
+	 * @param maxSize Maximum size of the byte array to be returned.
+	 * @return byte array containing the file contents.
+	 */
 	public static byte[] getFileContents(String filePath,int maxSize)
 	{
 		byte[] toRet = {};
