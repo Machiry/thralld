@@ -180,6 +180,7 @@ public class ClientMain
 						{
 							Logger.logError("Problem occured while prcessing command:" + commandRequestInfo.toString());
 							//We exit here, because we are no sure if server is up.
+							//or the server is malformed and trying to brute force.
 							//We try and connect to other servers.
 							break;
 						}

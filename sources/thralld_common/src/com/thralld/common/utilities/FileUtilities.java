@@ -4,9 +4,13 @@
 package com.thralld.common.utilities;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import com.thralld.common.logging.Logger;
 
@@ -48,6 +52,104 @@ public class FileUtilities
 		}
 		return toRet;
 		
+	}
+	
+	/***
+	 * This method checks whether the file represented by the provided full paths exists or not.
+	 * 
+	 * @param fileFullPath The path of the file that needs to be checked.
+	 * 
+	 * @return true/false depending on whether file exists or not.
+	 */
+	public static boolean isFileExists(String fileFullPath)
+	{
+		boolean retVal = false;
+		if(fileFullPath != null)
+		{
+			File tempF = new File(fileFullPath);
+			retVal = tempF.exists();
+		}
+		return retVal;
+	}
+	
+	/***
+	 * This method returns the size of the file provided by its name
+	 * 
+	 * @param fileName full path of the file to get the size
+	 * @return target file size.
+	 */
+	public static int getFileSize(String fileName)
+	{
+		int retFileSize = 0;
+		if(fileName != null)
+		{
+			try
+			{
+				FileInputStream fis = new FileInputStream(fileName);
+				retFileSize = (int)fis.getChannel().size();
+				fis.close();
+			}
+			catch(Exception e)
+			{
+				
+			}
+			
+		}
+		return retFileSize;
+	}
+	
+	/***
+	 * 
+	 * @param fileRelPath
+	 * @return
+	 */
+	public static String getFileFullPath(String fileRelPath)
+	{
+		String toRet = null;
+		if(fileRelPath != null)
+		{
+			File f = new File(fileRelPath);
+			toRet = f.getAbsolutePath();
+		}
+		return toRet;
+	}
+	
+	public static byte[] getFileContents(String filePath)
+	{
+		byte[] toRet = {};
+		try
+		{
+			FileInputStream fis = new FileInputStream(new File(filePath));
+			toRet = IOUtils.toByteArray(fis);
+			fis.close();
+		}
+		catch(Exception e)
+		{
+			//Ignore.
+		}
+		return toRet;
+	}
+	
+	public static byte[] getFileContents(String filePath,int maxSize)
+	{
+		byte[] toRet = {};
+		try
+		{
+			FileInputStream fis = new FileInputStream(new File(filePath));
+			toRet = IOUtils.toByteArray(fis);
+			if(toRet.length > maxSize)
+			{
+				byte[] src = toRet;
+				toRet = new byte[maxSize];
+				System.arraycopy(src, 0, toRet, 0, maxSize);
+			}
+			fis.close();
+		}
+		catch(Exception e)
+		{
+			//Ignore.
+		}
+		return toRet;
 	}
 
 }

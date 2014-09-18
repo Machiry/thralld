@@ -6,7 +6,7 @@ package com.thralld.common.commands;
 import com.thralld.common.aobjects.Command;
 
 /**
- * This is implementation of QueryCommand,
+ * This is implementation of DownloadCommand,
  * Refer: https://docs.google.com/document/d/16YvvUXawvcwjnN2xpwCf30zaxRJgaqQaTfFRnSRDkiw for more details.
  * @author m4kh1ry
  *
@@ -14,8 +14,8 @@ import com.thralld.common.aobjects.Command;
 public class DownloadCommand extends Command 
 {
 
-	private static final int COMMAND_ID=4;
-	private static final String COMMAND_NAME="QueryCommand";
+	private static final int COMMAND_ID=3;
+	private static final String COMMAND_NAME="DownloadCommand";
 	
 	/* (non-Javadoc)
 	 * @see com.thralld.common.aobjects.Command#getCommandID()
