@@ -6,8 +6,11 @@ package com.thralld.common.utilities;
 import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.ClientCommandHandler;
 import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.commandhandlers.DownloadCommandClientHandler;
+import com.thralld.common.commandhandlers.DownloadCommandServerHandler;
 import com.thralld.common.commandhandlers.QueryCommandClientHandler;
 import com.thralld.common.commandhandlers.QueryCommandServerHandler;
+import com.thralld.common.commands.DownloadCommandRequestInfo;
 import com.thralld.common.commands.QueryCommandRequestInfo;
 import com.thralld.common.aobjects.ServerCommandHandler;
 
@@ -27,12 +30,16 @@ public class CommandHandlerFactory
 	@CanReturnNull
 	public static ServerCommandHandler getServerCommandHandler(CommandRequestInfo toProcessRequest)
 	{
-		QueryCommandServerHandler toRet = null;
+		ServerCommandHandler toRet = null;
 		if(toProcessRequest != null)
 		{
 			if(toProcessRequest instanceof QueryCommandRequestInfo)
 			{
 				toRet = new QueryCommandServerHandler();
+			}
+			if(toProcessRequest instanceof DownloadCommandRequestInfo)
+			{
+				toRet = new DownloadCommandServerHandler();
 			}
 		}
 		return toRet;
@@ -46,12 +53,16 @@ public class CommandHandlerFactory
 	@CanReturnNull
 	public static ClientCommandHandler getClientCommandHandler(CommandRequestInfo toProcessRequest)
 	{
-		QueryCommandClientHandler toRet = null;
+		ClientCommandHandler toRet = null;
 		if(toProcessRequest != null)
 		{
 			if(toProcessRequest instanceof QueryCommandRequestInfo)
 			{
 				toRet = new QueryCommandClientHandler();
+			}
+			if(toProcessRequest instanceof DownloadCommandRequestInfo)
+			{
+				toRet = new DownloadCommandClientHandler();
 			}
 		}
 		return toRet;

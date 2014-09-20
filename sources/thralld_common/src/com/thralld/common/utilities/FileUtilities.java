@@ -3,9 +3,11 @@
  */
 package com.thralld.common.utilities;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -165,6 +167,50 @@ public class FileUtilities
 			//Ignore.
 		}
 		return toRet;
+	}
+	
+	/***
+	 * This method saves provided contents to the given file path.
+	 * 
+	 * @param fileContents Contents of the file to be saved.
+	 * @param filePath Path of the file to be created.
+	 */
+	public static void saveFile(byte[] fileContents,String filePath)
+	{
+		try
+		{
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+			bos.write(fileContents);
+			bos.flush();
+			bos.close();
+		}
+		catch(Exception e)
+		{
+			Logger.logError("Problem occured while writing to the new file");
+		}
+	}
+	
+	/***
+	 * This method saves the provided contents to the given file
+	 * 
+	 * @param fileContents Contents of the file to be saved.
+	 * @param dirName Directory path in which file needs to be created.
+	 * @param fileName Name of the file to be created.
+	 */
+	public static void saveFile(byte[] fileContents,String dirName,String fileName)
+	{
+		try
+		{
+			File toWriteFile = new File(dirName,fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(toWriteFile));
+			bos.write(fileContents);
+			bos.flush();
+			bos.close();
+		}
+		catch(Exception e)
+		{
+			Logger.logError("Problem occured while writing to the new file");
+		}
 	}
 
 }

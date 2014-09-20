@@ -4,6 +4,7 @@
 package com.thralld.server.ui;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -19,6 +20,7 @@ import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.aobjects.CommandResponseInfo;
+import com.thralld.common.commandhandlers.DownloadCommandServerHandler;
 import com.thralld.common.logging.Logger;
 import com.thralld.common.objects.ClientInfo;
 import com.thralld.common.utilities.GenericUtilities;
@@ -30,6 +32,7 @@ import com.thralld.server.ui.interfaces.IClientCommandHandler;
 import com.thralld.server.ui.interfaces.IClientsCommandHandler;
 import com.thralld.server.ui.interfaces.ICommandParametersCommandHandler;
 import com.thralld.server.ui.interfaces.ICommandsCommandHandler;
+import com.thralld.server.ui.interfaces.IDownloadDirCommandHandler;
 import com.thralld.server.ui.interfaces.IExitCommandHandler;
 import com.thralld.server.ui.interfaces.IHelpCommandHandler;
 import com.thralld.server.ui.interfaces.ILogLevelCommandHandler;
@@ -43,7 +46,7 @@ import com.thralld.server.ui.interfaces.IServerStatusCommandHandler;
  */
 public class CommandLineUI implements IServerStatusCommandHandler,IClientsCommandHandler,
 IHelpCommandHandler,IExitCommandHandler,IServerStartCommandHandler,ICommandsCommandHandler,
-ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
+ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler,IDownloadDirCommandHandler
 {
 	
 	private static String commandPrompt = "thralld_server";
@@ -80,6 +83,7 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 		availableCommands.put("comm_params", commonCommandHandler);
 		availableCommands.put("client", commonCommandHandler);
 		availableCommands.put("loglevel", commonCommandHandler);
+		availableCommands.put("ddir", commonCommandHandler);
 		
 	}
 	
@@ -178,6 +182,15 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 			}
 			
 		}
+		if(command.equals("ddir"))
+		{
+			IDownloadDirCommandHandler cmdHandler = (IDownloadDirCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				retVal = cmdHandler.handleDownloadDirCommand(providedCommandLine, System.out, serverInterface);
+			}
+			
+		}
 		return retVal;
 	}
 
@@ -260,6 +273,15 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 			if(cmdHandler != null)
 			{
 				cmdHandler.displayLogLevelCommandHelpMessage(System.out);
+			}
+			
+		}
+		if(command.equals("ddir"))
+		{
+			IDownloadDirCommandHandler cmdHandler = (IDownloadDirCommandHandler)availableCommands.get(command);
+			if(cmdHandler != null)
+			{
+				cmdHandler.displayDownloadDirCommandHelpMessage(System.out);
 			}
 			
 		}
@@ -732,6 +754,62 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler
 		outputStream.println("This command sets the log level of the server.");
 		outputStream.println("\tv[erbose] : Set log level to verbose (all log entries will be displayed).");
 		outputStream.println("\tn[ormal] : Set log level to normal (only severe log entries will be displayed).");
+	}
+
+	//ddir command handler
+	@Override
+	public boolean handleDownloadDirCommand(String providedCommandLine,
+			PrintStream outputStream,
+			IServerStatusInterface targetServerInterface) 
+	{
+		
+		boolean retVal = false;
+		String[] commParts = GenericUtilities.splitBySpace(providedCommandLine);
+		if(commParts != null && commParts.length >= 2)
+		{
+			String toSetLev = commParts[1];
+			if(toSetLev.equals("get"))
+			{
+				outputStream.println("Current Download Directory:"+DownloadCommandServerHandler.downloadDir);
+				retVal = true;
+			}
+			else if(toSetLev.equals("set") && commParts.length > 2)
+			{
+				File toSetDir = new File(commParts[2]);
+				try
+				{
+					if(!toSetDir.exists())
+					{
+						toSetDir.mkdirs();
+						retVal = true;
+					}
+					else if(toSetDir.isDirectory())
+					{
+						retVal = true;
+					}
+					if(retVal)
+					{
+						DownloadCommandServerHandler.downloadDir = toSetDir.getAbsolutePath();
+					}
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		}
+		return retVal;
+	}
+
+	@Override
+	public void displayDownloadDirCommandHelpMessage(PrintStream outputStream) 
+	{
+		outputStream.println("Usage: ddir [get|set] <targetDir>");
+		outputStream.println("This command sets download directory for the server.");
+		outputStream.println("\tget : Gets and displays the current download directory.");
+		outputStream.println("\tset : Sets the provided directory as download directory.");
+		outputStream.println("\t\ttargetDir: The directory which has to be the new download directory.");
+		
 	}
 
 }

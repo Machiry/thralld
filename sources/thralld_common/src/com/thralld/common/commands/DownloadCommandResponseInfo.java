@@ -53,6 +53,19 @@ public class DownloadCommandResponseInfo extends CommandResponseInfo
 		return retVal;
 	}
 	
+	/***
+	 * This method returns not available response object.
+	 * @param uniqueID target unique id of the object to be returned.
+	 * @return DownloadCommandResponseInfo object representing not available reponse.
+	 */
+	public static DownloadCommandResponseInfo getNotAvailableResponse(String uniqueID)
+	{
+		DownloadCommandResponseInfo toRet = new DownloadCommandResponseInfo();
+		toRet.transactionID = uniqueID;
+		toRet.setNotAvailableReponse();
+		return toRet;
+	}
+	
 	@Override
 	public String toString()
 	{
