@@ -12,6 +12,7 @@ import com.thralld.common.annotations.CanReturnNull;
 import com.thralld.common.annotations.ThralldCommandVersion;
 import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
+import com.thralld.common.commands.DownloadCommand;
 import com.thralld.common.commands.QueryCommand;
 import com.thralld.common.logging.Logger;
 
@@ -30,6 +31,7 @@ public class ReflectionHelper
 	{
 		ArrayList<Class<?>> toRet = new ArrayList<Class<?>>();
 		toRet.add(QueryCommand.class);
+		toRet.add(DownloadCommand.class);
 		return toRet;
 	}
 	

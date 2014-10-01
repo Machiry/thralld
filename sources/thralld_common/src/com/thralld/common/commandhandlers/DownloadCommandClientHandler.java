@@ -39,7 +39,7 @@ public class DownloadCommandClientHandler extends ClientCommandHandler {
 				else
 				{
 					DownloadCommandRequestInfo currentRequest = (DownloadCommandRequestInfo)toProcess;
-					Logger.logInfo("Starting Client QueryCommand processing on connection:"+targetNetworkConnection.toString());
+					Logger.logInfo("Starting Client DownloadCommand processing on connection:"+targetNetworkConnection.toString());
 					DownloadCommandScheduleInfo scheduleInfo = new DownloadCommandScheduleInfo();
 					scheduleInfo.transactionID = currentRequest.transactionID;
 					scheduleInfo.no_of_files = currentRequest.no_of_files;

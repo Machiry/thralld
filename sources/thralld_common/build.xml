@@ -11,6 +11,7 @@
   <!-- Add jars to the classpath -->
   <path id="thralld_common.classpath">
         <pathelement location="${thralld_common.basedir}/bin"/>
+		<pathelement location="${thralld_common.lib.dir}/commons-io-2.4.jar"/>
 		<pathelement location="${thralld_common.lib.dir}/reflections-0.9.9-RC1.jar"/>
 		<pathelement location="${thralld_common.lib.dir}/httpclient-4.3.5.jar"/>
 		<pathelement location="${thralld_common.lib.dir}/httpclient-cache-4.3.5.jar"/>

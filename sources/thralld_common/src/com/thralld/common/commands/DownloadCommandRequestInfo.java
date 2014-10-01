@@ -38,7 +38,7 @@ public class DownloadCommandRequestInfo extends CommandRequestInfo
 		toRet.add("num_files: Integer representing number of files.");
 		toRet.add("files: Absolute path of the files(separated by comma) on client machine that needs to be downloaded.");
 		toRet.add("[optional] max_files_sizes: Maximum sizes(separaed by comma) of the individual files that needs to be downloaded.-1 if unlimited");
-		return null;
+		return toRet;
 	}
 
 	/* (non-Javadoc)

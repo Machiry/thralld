@@ -790,11 +790,13 @@ ICommandParametersCommandHandler,IClientCommandHandler,ILogLevelCommandHandler,I
 					if(retVal)
 					{
 						DownloadCommandServerHandler.downloadDir = toSetDir.getAbsolutePath();
+						outputStream.println("Successfully set provided directory as download directory");
 					}
 				}
 				catch(Exception e)
 				{
-					
+					retVal = false;
+					outputStream.println("Error:Improper directory provided.");
 				}
 			}
 		}
