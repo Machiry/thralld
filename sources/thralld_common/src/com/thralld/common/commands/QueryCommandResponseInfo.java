@@ -9,6 +9,7 @@ import java.util.List;
 import com.thralld.common.aobjects.CommandResponseInfo;
 
 /**
+ * This class represents ResponseInfo object of the QueryCommand.
  * @author m4kh1ry
  *
  */
@@ -40,7 +41,7 @@ public class QueryCommandResponseInfo extends CommandResponseInfo
 	/***
 	 * This method returns not available response object.
 	 * @param uniqueID target unique id of the object to be returned.
-	 * @return QueryCommandResponseInfo object representing not available reponse.
+	 * @return QueryCommandResponseInfo object representing not available response.
 	 */
 	public static QueryCommandResponseInfo getNotAvailableResponse(String uniqueID)
 	{

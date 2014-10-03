@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.thralld.common.aobjects.CommandResponseInfo;
 
 /**
+ * This class represents ResponseInfo object of the DownloadCommand.
  * @author m4kh1ry
  *
  */
@@ -19,6 +20,8 @@ public class DownloadCommandResponseInfo extends CommandResponseInfo
 	 */
 	private static final long serialVersionUID = -6422237562984182592L;
 	
+	//Refer: https://docs.google.com/document/d/16YvvUXawvcwjnN2xpwCf30zaxRJgaqQaTfFRnSRDkiw/edit?usp=sharing 
+	//for more details on commands
 	public int no_of_files = 0;
 	public ArrayList<Integer> result_status = new ArrayList<Integer>();
 	public ArrayList<String> result_strings = new ArrayList<String>();
@@ -56,7 +59,7 @@ public class DownloadCommandResponseInfo extends CommandResponseInfo
 	/***
 	 * This method returns not available response object.
 	 * @param uniqueID target unique id of the object to be returned.
-	 * @return DownloadCommandResponseInfo object representing not available reponse.
+	 * @return DownloadCommandResponseInfo object representing not available response.
 	 */
 	public static DownloadCommandResponseInfo getNotAvailableResponse(String uniqueID)
 	{

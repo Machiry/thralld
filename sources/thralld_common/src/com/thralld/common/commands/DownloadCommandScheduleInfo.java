@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.thralld.common.aobjects.CommandScheduleInfo;
 
 /**
+ * This class represents ScheduleInfo object of the DownloadCommand.
  * @author m4kh1ry
  *
  */

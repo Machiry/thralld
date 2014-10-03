@@ -13,6 +13,8 @@ import com.thralld.common.aobjects.CommandRequestInfo;
 import com.thralld.common.utilities.GenericUtilities;
 
 /**
+ * This class represents RequestInfo object of the DownloadCommand.
+ * 
  * @author m4kh1ry
  *
  */

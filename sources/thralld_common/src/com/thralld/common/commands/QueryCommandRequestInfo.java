@@ -11,6 +11,7 @@ import com.thralld.common.aobjects.Command;
 import com.thralld.common.aobjects.CommandRequestInfo;
 
 /**
+ * This class represents RequestInfo object of the QueryCommand.
  * @author m4kh1ry
  *
  */
